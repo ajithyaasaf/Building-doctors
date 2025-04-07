@@ -1,19 +1,9 @@
 import { useEffect } from "react";
 import { Link } from "wouter";
+import { SERVICES } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
-import { useQuery } from "@tanstack/react-query";
-import { Loader2 } from "lucide-react";
 
 const ServicesPage = () => {
-  // Fetch services from API
-  const { data: services, isLoading, error } = useQuery({
-    queryKey: ['/api/services'],
-    queryFn: async () => {
-      const response = await fetch('/api/services');
-      const data = await response.json();
-      return data || [];
-    }
-  });
 
   useEffect(() => {
     document.title = "Our Services | OM Vinayaga Associates";
@@ -42,23 +32,8 @@ const ServicesPage = () => {
             </p>
           </div>
 
-          {isLoading ? (
-            <div className="flex justify-center items-center min-h-[400px]">
-              <Loader2 className="h-10 w-10 animate-spin text-primary" />
-            </div>
-          ) : error ? (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-              <h3 className="text-lg font-semibold text-red-800 mb-2">Error Loading Services</h3>
-              <p className="text-red-600">There was an error loading the services. Please try again later.</p>
-            </div>
-          ) : !services || services.length === 0 ? (
-            <div className="bg-white rounded-lg shadow p-8 text-center">
-              <h3 className="text-xl font-bold mb-2">No services available</h3>
-              <p className="text-gray-600 mb-4">Please check back later for our services.</p>
-            </div>
-          ) : (
-            <div className="space-y-16">
-              {services.map((service) => (
+          <div className="space-y-16">
+            {SERVICES.map((service) => (
                 <div key={service.id} id={service.slug} className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center scroll-mt-24">
                   <div className={`order-2 ${service.id % 2 === 0 ? 'md:order-1' : 'md:order-2'}`}>
                     {service.image ? (
@@ -96,7 +71,6 @@ const ServicesPage = () => {
                 </div>
               ))}
             </div>
-          )}
         </div>
       </section>
 

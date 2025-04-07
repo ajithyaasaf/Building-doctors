@@ -1,9 +1,265 @@
 import { useState, useEffect } from "react";
 import { Link } from "wouter";
-import { PRODUCT_CATEGORIES } from "@/lib/constants";
+import { PRODUCT_CATEGORIES, FEATURED_PRODUCTS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
+
+// Sample Products Array (24 products - 4 per each of the 6 categories)
+const PRODUCTS = [
+  // Waterproofing Category (6 products)
+  {
+    id: 1,
+    name: "BD Terrace Shield",
+    description: "Premium terrace waterproofing compound with UV resistance and thermal insulation properties.",
+    price: 2450,
+    image: "https://images.unsplash.com/photo-1620177123861-bbe8116e5de7?q=80&w=500&auto=format&fit=crop",
+    rating: 4.8,
+    isBestseller: true,
+    category: "waterproofing"
+  },
+  {
+    id: 2,
+    name: "BD Basement Guard",
+    description: "Specialized waterproofing solution for basements and underground structures.",
+    price: 2750,
+    image: "https://images.unsplash.com/photo-1591955506264-3f5a6834570a?q=80&w=500&auto=format&fit=crop",
+    rating: 4.7,
+    isBestseller: false,
+    category: "waterproofing"
+  },
+  {
+    id: 3,
+    name: "BD Wet Area Protector",
+    description: "Bathroom and wet area waterproofing system that prevents seepage and leakage.",
+    price: 1950,
+    image: "https://images.unsplash.com/photo-1584622781564-1d987f7333c1?q=80&w=500&auto=format&fit=crop",
+    rating: 4.6,
+    isBestseller: false,
+    category: "waterproofing"
+  },
+  {
+    id: 4,
+    name: "BD External Wall Shield",
+    description: "External wall waterproofing coating with weather resistance and anti-fungal properties.",
+    price: 2250,
+    image: "https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?q=80&w=500&auto=format&fit=crop",
+    rating: 4.5,
+    isBestseller: false,
+    category: "waterproofing"
+  },
+  
+  // Repair Category (5 products)
+  {
+    id: 5,
+    name: "BD Crack Seal Pro",
+    description: "High-strength polymer-modified crack filling compound for structural cracks in concrete and masonry.",
+    price: 1850,
+    image: "https://images.unsplash.com/photo-1590644286459-69bb243399f9?q=80&w=500&auto=format&fit=crop",
+    rating: 4.7,
+    isBestseller: true,
+    category: "repair"
+  },
+  {
+    id: 6,
+    name: "BD Concrete Repair Mortar",
+    description: "Ready-to-use polymer-modified mortar for repairing damaged concrete surfaces.",
+    price: 1650,
+    image: "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=500&auto=format&fit=crop",
+    rating: 4.6,
+    isBestseller: false,
+    category: "repair"
+  },
+  {
+    id: 7,
+    name: "BD Steel Protector",
+    description: "Anti-corrosive coating for reinforcement steel to prevent rusting and extend durability.",
+    price: 1450,
+    image: "https://images.unsplash.com/photo-1593113630400-ea4288922497?q=80&w=500&auto=format&fit=crop",
+    rating: 4.5,
+    isBestseller: false,
+    category: "repair"
+  },
+  {
+    id: 8,
+    name: "BD Surface Restorer",
+    description: "Surface preparation and restoration compound for old concrete and masonry surfaces.",
+    price: 1750,
+    image: "https://images.unsplash.com/photo-1517581177682-a085bb7ffb38?q=80&w=500&auto=format&fit=crop",
+    rating: 4.4,
+    isBestseller: false,
+    category: "repair"
+  },
+  
+  // Admixtures Category (4 products)
+  {
+    id: 9,
+    name: "BD Concrete Booster",
+    description: "Advanced concrete admixture that enhances strength, reduces water content, and improves workability.",
+    price: 1350,
+    image: "https://images.unsplash.com/photo-1621113171451-de62152b9e27?q=80&w=500&auto=format&fit=crop",
+    rating: 4.9,
+    isBestseller: true,
+    isNew: true,
+    category: "admixtures"
+  },
+  {
+    id: 10,
+    name: "BD Quick Set",
+    description: "Rapid setting accelerator admixture for concrete and mortars in cold weather conditions.",
+    price: 1250,
+    image: "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=500&auto=format&fit=crop",
+    rating: 4.7,
+    isBestseller: false,
+    category: "admixtures"
+  },
+  {
+    id: 11,
+    name: "BD Flow Enhancer",
+    description: "Superplasticizer admixture for highly flowable concrete with reduced water content.",
+    price: 1450,
+    image: "https://images.unsplash.com/photo-1518107616985-bd48230d3b20?q=80&w=500&auto=format&fit=crop",
+    rating: 4.6,
+    isBestseller: false,
+    category: "admixtures"
+  },
+  {
+    id: 12,
+    name: "BD Air Entrainer",
+    description: "Air-entraining admixture for improved freeze-thaw resistance in concrete.",
+    price: 1150,
+    image: "https://images.unsplash.com/photo-1517581177682-a085bb7ffb38?q=80&w=500&auto=format&fit=crop",
+    rating: 4.5,
+    isBestseller: false,
+    category: "admixtures"
+  },
+  
+  // Sealants Category (3 products)
+  {
+    id: 13,
+    name: "BD Flex Seal",
+    description: "Flexible polyurethane sealant for expansion joints and areas subject to movement with excellent adhesion.",
+    price: 950,
+    image: "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?q=80&w=500&auto=format&fit=crop",
+    rating: 4.6,
+    isBestseller: true,
+    category: "sealants"
+  },
+  {
+    id: 14,
+    name: "BD Silicone Pro",
+    description: "Premium silicone sealant for sanitaryware, glass, and aluminum with anti-fungal properties.",
+    price: 850,
+    image: "https://images.unsplash.com/photo-1542013936693-884638332954?q=80&w=500&auto=format&fit=crop",
+    rating: 4.5,
+    isBestseller: false,
+    category: "sealants"
+  },
+  {
+    id: 15,
+    name: "BD Construction Seal",
+    description: "High-strength construction sealant for bonding various building materials with weather resistance.",
+    price: 750,
+    image: "https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?q=80&w=500&auto=format&fit=crop",
+    rating: 4.4,
+    isBestseller: false,
+    category: "sealants"
+  },
+  {
+    id: 16,
+    name: "BD Floor Joint Seal",
+    description: "Specialized sealant for floor joints with high abrasion resistance and flexibility.",
+    price: 1050,
+    image: "https://images.unsplash.com/photo-1517581177682-a085bb7ffb38?q=80&w=500&auto=format&fit=crop",
+    rating: 4.5,
+    isBestseller: false,
+    category: "sealants"
+  },
+  
+  // Coatings Category (4 products)
+  {
+    id: 17,
+    name: "BD Weatherproof Exterior",
+    description: "Premium exterior wall coating with UV resistance, water repellency, and long-lasting color.",
+    price: 2150,
+    image: "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?q=80&w=500&auto=format&fit=crop",
+    rating: 4.8,
+    isBestseller: true,
+    category: "coatings"
+  },
+  {
+    id: 18,
+    name: "BD Anti-Algae Paint",
+    description: "Specialized exterior coating with anti-algae and anti-fungal properties for humid climates.",
+    price: 2350,
+    image: "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=500&auto=format&fit=crop",
+    rating: 4.7,
+    isBestseller: false,
+    category: "coatings"
+  },
+  {
+    id: 19,
+    name: "BD Floor Guard",
+    description: "Epoxy floor coating for industrial and commercial floors with chemical resistance and durability.",
+    price: 2550,
+    image: "https://images.unsplash.com/photo-1517581177682-a085bb7ffb38?q=80&w=500&auto=format&fit=crop",
+    rating: 4.6,
+    isBestseller: false,
+    category: "coatings"
+  },
+  {
+    id: 20,
+    name: "BD Roof Cool",
+    description: "Heat reflective roof coating that reduces indoor temperature and energy consumption.",
+    price: 2250,
+    image: "https://images.unsplash.com/photo-1472342139520-1aa49517fed8?q=80&w=500&auto=format&fit=crop",
+    rating: 4.7,
+    isBestseller: false,
+    isNew: true,
+    category: "coatings"
+  },
+  
+  // Additional products (4 more to make it 24 total)
+  {
+    id: 21,
+    name: "BD Grout Master",
+    description: "High-strength tile grout with water resistance and anti-stain properties.",
+    price: 1150,
+    image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=500&auto=format&fit=crop",
+    rating: 4.5,
+    isBestseller: false,
+    category: "repair"
+  },
+  {
+    id: 22,
+    name: "BD Elastomeric Membrane",
+    description: "Flexible waterproofing membrane for terraces and wet areas with crack-bridging ability.",
+    price: 2150,
+    image: "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?q=80&w=500&auto=format&fit=crop",
+    rating: 4.6,
+    isBestseller: false,
+    category: "waterproofing"
+  },
+  {
+    id: 23,
+    name: "BD Industrial Hardener",
+    description: "Concrete floor hardener and dustproofer for industrial floors with high abrasion resistance.",
+    price: 1950,
+    image: "https://images.unsplash.com/photo-1517581177682-a085bb7ffb38?q=80&w=500&auto=format&fit=crop",
+    rating: 4.5,
+    isBestseller: false,
+    category: "admixtures"
+  },
+  {
+    id: 24,
+    name: "BD Acrylic Primer",
+    description: "Water-based acrylic primer for concrete and masonry surfaces before painting or coating.",
+    price: 1250,
+    image: "https://images.unsplash.com/photo-1520516098521-83b3ee731303?q=80&w=500&auto=format&fit=crop",
+    rating: 4.4,
+    isBestseller: false,
+    category: "coatings"
+  }
+];
 
 const ProductsPage = () => {
   const [activeCategory, setActiveCategory] = useState("all");
@@ -11,15 +267,9 @@ const ProductsPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 12;
   
-  // Fetch products from API
-  const { data: productsData, isLoading, error } = useQuery({
-    queryKey: ['/api/products'],
-    queryFn: async () => {
-      const response = await fetch('/api/products');
-      const data = await response.json();
-      return data.products || [];
-    }
-  });
+  // Dummy variables for loading and error states since we're using hardcoded data
+  const isLoading = false;
+  const error = null;
   
   useEffect(() => {
     document.title = "Our Products | OM Vinayaga Associates";
@@ -27,13 +277,13 @@ const ProductsPage = () => {
   }, [activeCategory, searchTerm]);
   
   // Filter products based on search term and category
-  const filteredProducts = productsData ? productsData.filter(product => {
+  const filteredProducts = PRODUCTS.filter(product => {
     const matchesSearch = product.name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
                          product.description?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = activeCategory === "all" || product.category === activeCategory;
     
     return matchesSearch && matchesCategory;
-  }) : [];
+  });
   
   // Paginate products
   const indexOfLastProduct = currentPage * productsPerPage;
