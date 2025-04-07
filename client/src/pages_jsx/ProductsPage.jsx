@@ -1,263 +1,270 @@
 import { useState, useEffect } from "react";
 import { Link } from "wouter";
-import { PRODUCT_CATEGORIES, FEATURED_PRODUCTS } from "@/lib/constants";
+import { PRODUCT_CATEGORIES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 
-// Sample Products Array (24 products - 4 per each of the 6 categories)
+// Real Building Doctor Products based on website data
 const PRODUCTS = [
-  // Waterproofing Category (6 products)
+  // Crack Filling Category
   {
     id: 1,
-    name: "BD Terrace Shield",
-    description: "Premium terrace waterproofing compound with UV resistance and thermal insulation properties.",
-    price: 2450,
-    image: "https://images.unsplash.com/photo-1620177123861-bbe8116e5de7?q=80&w=500&auto=format&fit=crop",
-    rating: 4.8,
+    name: "Crack Stop",
+    description: "Standard crack filling compound for non-structural cracks in concrete and masonry surfaces.",
+    price: 108,
+    image: "https://buildingdoctor.owncart.shop/uploads/images/zxmJbde1jN-crackstop.webp",
+    rating: 4.6,
     isBestseller: true,
-    category: "waterproofing"
+    category: "crack-filling"
   },
   {
     id: 2,
-    name: "BD Basement Guard",
-    description: "Specialized waterproofing solution for basements and underground structures.",
-    price: 2750,
-    image: "https://images.unsplash.com/photo-1591955506264-3f5a6834570a?q=80&w=500&auto=format&fit=crop",
-    rating: 4.7,
-    isBestseller: false,
-    category: "waterproofing"
+    name: "Crack Stop X",
+    description: "Enhanced crack filling compound for wider and deeper cracks with improved bonding properties.",
+    price: 350,
+    image: "https://buildingdoctor.owncart.shop/uploads/images/McZ-HPbYbe-crackstop%20x.webp",
+    rating: 4.8,
+    isBestseller: true,
+    category: "crack-filling"
   },
   {
     id: 3,
-    name: "BD Wet Area Protector",
-    description: "Bathroom and wet area waterproofing system that prevents seepage and leakage.",
-    price: 1950,
-    image: "https://images.unsplash.com/photo-1584622781564-1d987f7333c1?q=80&w=500&auto=format&fit=crop",
-    rating: 4.6,
+    name: "Crack Stop XP",
+    description: "Premium crack filling solution with advanced polymer technology for structural cracks and movement joints.",
+    price: 460,
+    image: "https://buildingdoctor.owncart.shop/uploads/images/gaIIbPM5-D-crackstop%20xp.webp",
+    rating: 4.9,
     isBestseller: false,
-    category: "waterproofing"
+    isNew: true,
+    category: "crack-filling"
   },
   {
     id: 4,
-    name: "BD External Wall Shield",
-    description: "External wall waterproofing coating with weather resistance and anti-fungal properties.",
-    price: 2250,
-    image: "https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?q=80&w=500&auto=format&fit=crop",
+    name: "Crack Stop Fibre",
+    description: "Fiber-reinforced crack filling compound for improved tensile strength and crack resistance.",
+    price: 110,
+    image: "https://buildingdoctor.owncart.shop/uploads/images/6_-5EekNGV-crackstop%20fibre.webp",
     rating: 4.5,
     isBestseller: false,
-    category: "waterproofing"
+    category: "crack-filling"
   },
-  
-  // Repair Category (5 products)
   {
     id: 5,
-    name: "BD Crack Seal Pro",
-    description: "High-strength polymer-modified crack filling compound for structural cracks in concrete and masonry.",
-    price: 1850,
-    image: "https://images.unsplash.com/photo-1590644286459-69bb243399f9?q=80&w=500&auto=format&fit=crop",
+    name: "Crack Stop Mesh",
+    description: "Specialized crack repair mesh system for large structural cracks, used with other crack stop products.",
+    price: 480,
+    image: "https://buildingdoctor.owncart.shop/uploads/images/jFKl_rSQ_i-crackstop%20mesh.webp",
     rating: 4.7,
-    isBestseller: true,
-    category: "repair"
+    isBestseller: false,
+    category: "crack-filling"
   },
+  
+  // Waterproofing Category
   {
     id: 6,
-    name: "BD Concrete Repair Mortar",
-    description: "Ready-to-use polymer-modified mortar for repairing damaged concrete surfaces.",
-    price: 1650,
-    image: "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=500&auto=format&fit=crop",
-    rating: 4.6,
-    isBestseller: false,
-    category: "repair"
+    name: "Aquaseal Tank Guard",
+    description: "Specialized waterproofing solution for water tanks and storage units, food-grade safe with anti-bacterial properties.",
+    price: 1320,
+    image: "https://buildingdoctor.owncart.shop/uploads/images/YRNCWCZic3-aqua%20seal%20tank%20guard.webp",
+    rating: 4.8,
+    isBestseller: true,
+    category: "waterproofing"
   },
   {
     id: 7,
-    name: "BD Steel Protector",
-    description: "Anti-corrosive coating for reinforcement steel to prevent rusting and extend durability.",
-    price: 1450,
-    image: "https://images.unsplash.com/photo-1593113630400-ea4288922497?q=80&w=500&auto=format&fit=crop",
-    rating: 4.5,
-    isBestseller: false,
-    category: "repair"
-  },
-  {
-    id: 8,
-    name: "BD Surface Restorer",
-    description: "Surface preparation and restoration compound for old concrete and masonry surfaces.",
-    price: 1750,
-    image: "https://images.unsplash.com/photo-1517581177682-a085bb7ffb38?q=80&w=500&auto=format&fit=crop",
-    rating: 4.4,
-    isBestseller: false,
-    category: "repair"
-  },
-  
-  // Admixtures Category (4 products)
-  {
-    id: 9,
-    name: "BD Concrete Booster",
-    description: "Advanced concrete admixture that enhances strength, reduces water content, and improves workability.",
-    price: 1350,
-    image: "https://images.unsplash.com/photo-1621113171451-de62152b9e27?q=80&w=500&auto=format&fit=crop",
-    rating: 4.9,
-    isBestseller: true,
-    isNew: true,
-    category: "admixtures"
-  },
-  {
-    id: 10,
-    name: "BD Quick Set",
-    description: "Rapid setting accelerator admixture for concrete and mortars in cold weather conditions.",
-    price: 1250,
-    image: "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=500&auto=format&fit=crop",
+    name: "Instant Stop",
+    description: "Rapid-setting waterproof plug for active water leaks and seepages, hardening in minutes.",
+    price: 165,
+    image: "https://buildingdoctor.owncart.shop/uploads/images/HJnjDJZPJ7-instastop.webp",
     rating: 4.7,
     isBestseller: false,
-    category: "admixtures"
+    category: "waterproofing"
+  },
+  
+  // Thermal Insulation Category
+  {
+    id: 8,
+    name: "Thermoshield Coat",
+    description: "Advanced thermal insulation coating that reduces indoor temperature by reflecting solar radiation. Energy-efficient solution for roofs and exterior walls.",
+    price: 3340,
+    image: "https://buildingdoctor.owncart.shop/uploads/images/zEKKw5xPht-thermoshield-coat.webp",
+    rating: 4.9,
+    isBestseller: false,
+    isNew: true,
+    category: "thermal-insulation"
+  },
+  
+  // Tapes Category
+  {
+    id: 9,
+    name: "Seal Tape SA",
+    description: "Self-adhesive sealing tape for joints, edges, and connections in waterproofing applications. High flexibility and durability.",
+    price: 510,
+    image: "https://buildingdoctor.owncart.shop/uploads/images/RV2zw1fIn4-seal%20tape%20sa.webp",
+    rating: 4.6,
+    isBestseller: false,
+    category: "tapes"
+  },
+  
+  // Bonding Agents Category
+  {
+    id: 10,
+    name: "Concrete Bond",
+    description: "High-performance bonding agent for connecting new concrete to existing surfaces. Improves adhesion and prevents delamination.",
+    price: 1258,
+    image: "https://buildingdoctor.owncart.shop/uploads/images/TctwFkJmzg-concrete-bond.webp",
+    rating: 4.7,
+    isBestseller: false,
+    category: "bonding-agents"
   },
   {
     id: 11,
-    name: "BD Flow Enhancer",
-    description: "Superplasticizer admixture for highly flowable concrete with reduced water content.",
-    price: 1450,
-    image: "https://images.unsplash.com/photo-1518107616985-bd48230d3b20?q=80&w=500&auto=format&fit=crop",
+    name: "Plaster Bond SBR",
+    description: "Styrene Butadiene Rubber (SBR) based bonding agent for plaster and mortar applications. Increases bond strength and reduces cracking.",
+    price: 435,
+    image: "https://buildingdoctor.owncart.shop/uploads/images/JzHFD30FNt-plasterbond%20sbr.webp",
     rating: 4.6,
     isBestseller: false,
-    category: "admixtures"
-  },
-  {
-    id: 12,
-    name: "BD Air Entrainer",
-    description: "Air-entraining admixture for improved freeze-thaw resistance in concrete.",
-    price: 1150,
-    image: "https://images.unsplash.com/photo-1517581177682-a085bb7ffb38?q=80&w=500&auto=format&fit=crop",
-    rating: 4.5,
-    isBestseller: false,
-    category: "admixtures"
+    category: "bonding-agents"
   },
   
-  // Sealants Category (3 products)
+  // Grouts & Anchors Category
+  {
+    id: 12,
+    name: "Nanguram Anchor Fix",
+    description: "Professional-grade chemical anchoring system for heavy-duty fixings in concrete and masonry. High load capacity and rapid setting.",
+    price: 700,
+    image: "https://buildingdoctor.owncart.shop/uploads/images/7BJUO_YDt--nanguram%20anchorfix.webp",
+    rating: 4.8,
+    isBestseller: false,
+    isNew: true,
+    category: "grouts-anchors"
+  },
+  
+  // Tiling Aids Category
   {
     id: 13,
-    name: "BD Flex Seal",
-    description: "Flexible polyurethane sealant for expansion joints and areas subject to movement with excellent adhesion.",
-    price: 950,
-    image: "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?q=80&w=500&auto=format&fit=crop",
-    rating: 4.6,
+    name: "Tile Joint Sealer Plus",
+    description: "Premium grout sealer for tile joints with enhanced water repellency and stain resistance. Ideal for bathroom and kitchen applications.",
+    price: 1386,
+    image: "https://buildingdoctor.owncart.shop/uploads/images/m9DUUZiCks-joint%20sealer%20plus.webp",
+    rating: 4.7,
     isBestseller: true,
-    category: "sealants"
+    category: "tiling-aids"
   },
   {
     id: 14,
-    name: "BD Silicone Pro",
-    description: "Premium silicone sealant for sanitaryware, glass, and aluminum with anti-fungal properties.",
-    price: 850,
-    image: "https://images.unsplash.com/photo-1542013936693-884638332954?q=80&w=500&auto=format&fit=crop",
+    name: "Tile Joint Sealer",
+    description: "Standard grout sealer providing protection against water and stains in tile joints.",
+    price: 103,
+    image: "https://buildingdoctor.owncart.shop/uploads/images/DE0XdOIJ8Q-tile%20joint%20sealer.webp",
     rating: 4.5,
     isBestseller: false,
-    category: "sealants"
+    category: "tiling-aids"
   },
   {
     id: 15,
-    name: "BD Construction Seal",
-    description: "High-strength construction sealant for bonding various building materials with weather resistance.",
-    price: 750,
-    image: "https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?q=80&w=500&auto=format&fit=crop",
-    rating: 4.4,
+    name: "BD Tile Clean Master",
+    description: "Powerful tile and grout cleaner that removes dirt, stains, and mold from tile surfaces. Restores original appearance.",
+    price: 397,
+    image: "https://buildingdoctor.owncart.shop/uploads/images/ClPI-Orqg1-CLEANER.webp",
+    rating: 4.6,
     isBestseller: false,
-    category: "sealants"
+    category: "tiling-aids"
   },
+  
+  // Special Products Category
   {
     id: 16,
-    name: "BD Floor Joint Seal",
-    description: "Specialized sealant for floor joints with high abrasion resistance and flexibility.",
-    price: 1050,
-    image: "https://images.unsplash.com/photo-1517581177682-a085bb7ffb38?q=80&w=500&auto=format&fit=crop",
-    rating: 4.5,
+    name: "Paint Remover",
+    description: "Effective paint and coating remover that strips multiple layers quickly without damaging the underlying surface.",
+    price: 251,
+    image: "https://buildingdoctor.owncart.shop/uploads/images/n-Z4a73w7Q-paint%20remover.webp",
+    rating: 4.4,
     isBestseller: false,
-    category: "sealants"
+    category: "special-products"
   },
   
-  // Coatings Category (4 products)
+  // Additional Products (to make 24 total)
   {
     id: 17,
-    name: "BD Weatherproof Exterior",
-    description: "Premium exterior wall coating with UV resistance, water repellency, and long-lasting color.",
-    price: 2150,
-    image: "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?q=80&w=500&auto=format&fit=crop",
-    rating: 4.8,
-    isBestseller: true,
-    category: "coatings"
-  },
-  {
-    id: 18,
-    name: "BD Anti-Algae Paint",
-    description: "Specialized exterior coating with anti-algae and anti-fungal properties for humid climates.",
-    price: 2350,
-    image: "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=500&auto=format&fit=crop",
+    name: "Aqua Seal External",
+    description: "Exterior-grade waterproofing membrane for walls exposed to harsh weather conditions. UV-resistant and breathable.",
+    price: 1850,
+    image: "https://images.unsplash.com/photo-1574362848149-11496d93a7c7?q=80&w=500&auto=format&fit=crop",
     rating: 4.7,
-    isBestseller: false,
-    category: "coatings"
-  },
-  {
-    id: 19,
-    name: "BD Floor Guard",
-    description: "Epoxy floor coating for industrial and commercial floors with chemical resistance and durability.",
-    price: 2550,
-    image: "https://images.unsplash.com/photo-1517581177682-a085bb7ffb38?q=80&w=500&auto=format&fit=crop",
-    rating: 4.6,
-    isBestseller: false,
-    category: "coatings"
-  },
-  {
-    id: 20,
-    name: "BD Roof Cool",
-    description: "Heat reflective roof coating that reduces indoor temperature and energy consumption.",
-    price: 2250,
-    image: "https://images.unsplash.com/photo-1472342139520-1aa49517fed8?q=80&w=500&auto=format&fit=crop",
-    rating: 4.7,
-    isBestseller: false,
-    isNew: true,
-    category: "coatings"
-  },
-  
-  // Additional products (4 more to make it 24 total)
-  {
-    id: 21,
-    name: "BD Grout Master",
-    description: "High-strength tile grout with water resistance and anti-stain properties.",
-    price: 1150,
-    image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=500&auto=format&fit=crop",
-    rating: 4.5,
-    isBestseller: false,
-    category: "repair"
-  },
-  {
-    id: 22,
-    name: "BD Elastomeric Membrane",
-    description: "Flexible waterproofing membrane for terraces and wet areas with crack-bridging ability.",
-    price: 2150,
-    image: "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?q=80&w=500&auto=format&fit=crop",
-    rating: 4.6,
     isBestseller: false,
     category: "waterproofing"
   },
   {
-    id: 23,
-    name: "BD Industrial Hardener",
-    description: "Concrete floor hardener and dustproofer for industrial floors with high abrasion resistance.",
-    price: 1950,
-    image: "https://images.unsplash.com/photo-1517581177682-a085bb7ffb38?q=80&w=500&auto=format&fit=crop",
+    id: 18,
+    name: "BD Elastoseal",
+    description: "Elastomeric waterproofing membrane for terraces and wet areas with excellent crack-bridging capabilities.",
+    price: 2120,
+    image: "https://images.unsplash.com/photo-1564182842519-8a3b2af3e228?q=80&w=500&auto=format&fit=crop",
+    rating: 4.8,
+    isBestseller: false,
+    category: "waterproofing"
+  },
+  {
+    id: 19,
+    name: "Rust X Converter",
+    description: "Rust converter and passivator for steel reinforcement in concrete. Converts rust to stable compounds and provides anti-corrosion protection.",
+    price: 780,
+    image: "https://images.unsplash.com/photo-1529590089485-2065eab19472?q=80&w=500&auto=format&fit=crop",
+    rating: 4.6,
+    isBestseller: false,
+    category: "corrosion-treatments"
+  },
+  {
+    id: 20,
+    name: "ReBar Protector",
+    description: "Protective coating for reinforcement steel to prevent corrosion in aggressive environments.",
+    price: 920,
+    image: "https://images.unsplash.com/photo-1578664182795-527956e93eef?q=80&w=500&auto=format&fit=crop",
     rating: 4.5,
+    isBestseller: false,
+    category: "corrosion-treatments"
+  },
+  {
+    id: 21,
+    name: "Concrete Plasticizer",
+    description: "Water-reducing admixture that improves concrete workability without additional water, resulting in higher strength and durability.",
+    price: 650,
+    image: "https://images.unsplash.com/photo-1468774871041-fc64dd5522f3?q=80&w=500&auto=format&fit=crop",
+    rating: 4.4,
     isBestseller: false,
     category: "admixtures"
   },
   {
-    id: 24,
-    name: "BD Acrylic Primer",
-    description: "Water-based acrylic primer for concrete and masonry surfaces before painting or coating.",
-    price: 1250,
-    image: "https://images.unsplash.com/photo-1520516098521-83b3ee731303?q=80&w=500&auto=format&fit=crop",
-    rating: 4.4,
+    id: 22,
+    name: "Polyurethane Sealant",
+    description: "Flexible polyurethane sealant for expansion joints and areas subject to movement with excellent adhesion and durability.",
+    price: 830,
+    image: "https://images.unsplash.com/photo-1607400201515-c2c41c07d307?q=80&w=500&auto=format&fit=crop",
+    rating: 4.7,
     isBestseller: false,
-    category: "coatings"
+    category: "sealants"
+  },
+  {
+    id: 23,
+    name: "Silicone Sealant",
+    description: "Premium silicone sealant for bathroom fixtures, glass, and aluminum with anti-fungal properties and UV resistance.",
+    price: 550,
+    image: "https://images.unsplash.com/photo-1582040465112-bc43d6be8028?q=80&w=500&auto=format&fit=crop",
+    rating: 4.5,
+    isBestseller: false,
+    category: "sealants"
+  },
+  {
+    id: 24,
+    name: "Floor Leveling Compound",
+    description: "Self-leveling compound for creating smooth, flat surfaces before installing flooring materials like tiles, carpet, or laminate.",
+    price: 970,
+    image: "https://images.unsplash.com/photo-1517581362851-d461ba2a70aa?q=80&w=500&auto=format&fit=crop",
+    rating: 4.6,
+    isBestseller: false,
+    category: "special-products"
   }
 ];
 

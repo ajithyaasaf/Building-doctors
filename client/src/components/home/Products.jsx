@@ -1,37 +1,22 @@
 import { useState } from "react";
 import { Link } from "wouter";
-import { PRODUCT_CATEGORIES } from "@/lib/constants";
+import { PRODUCT_CATEGORIES, FEATURED_PRODUCTS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
 
 const Products = () => {
   const [activeCategory, setActiveCategory] = useState("all");
   
-  // Fetch products from API
-  const { data: productsData, isLoading, error } = useQuery({
-    queryKey: ["products"],
-    queryFn: async () => {
-      try {
-        const res = await apiRequest("GET", "/api/products");
-        return await res.json();
-      } catch (error) {
-        console.error("Failed to fetch products:", error);
-        return { products: [] };
-      }
-    }
-  });
-  
-  // Get products from API response
-  const allProducts = productsData?.products || [];
-  
-  // Get featured products (bestsellers or new products)
-  const featuredProducts = allProducts.filter(product => product.isBestseller || product.isNew).slice(0, 8);
+  // Use hardcoded featured products from constants
+  const featuredProducts = FEATURED_PRODUCTS;
   
   // Filter products by category
   const filteredProducts = activeCategory === "all" 
     ? featuredProducts
     : featuredProducts.filter(product => product.category === activeCategory);
+    
+  // Variables for state (no longer needed with hardcoded data)
+  const isLoading = false;
+  const error = null;
   
   // Render product card
   const renderProductCard = (product) => (
@@ -105,25 +90,8 @@ const Products = () => {
           </div>
         </div>
         
-        {/* Loading State */}
-        {isLoading && (
-          <div className="text-center py-16">
-            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent"></div>
-            <p className="mt-4 text-gray-600">Loading products...</p>
-          </div>
-        )}
-        
-        {/* Error State */}
-        {error && (
-          <div className="text-center py-16">
-            <div className="inline-block bg-red-100 p-4 rounded-lg">
-              <p className="text-red-600">Failed to load products. Please try again later.</p>
-            </div>
-          </div>
-        )}
-        
         {/* Empty State */}
-        {!isLoading && !error && filteredProducts.length === 0 && (
+        {filteredProducts.length === 0 && (
           <div className="text-center py-16">
             <div className="inline-block bg-gray-100 p-8 rounded-lg">
               <p className="text-gray-600">No products found in this category.</p>
@@ -138,14 +106,14 @@ const Products = () => {
         )}
         
         {/* Products Grid */}
-        {!isLoading && !error && filteredProducts.length > 0 && (
+        {filteredProducts.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {filteredProducts.map(product => renderProductCard(product))}
           </div>
         )}
         
         {/* Browse All Products Button */}
-        {!isLoading && !error && featuredProducts.length > 0 && (
+        {featuredProducts.length > 0 && (
           <div className="mt-12 text-center">
             <Link href="/products">
               <a className="inline-flex items-center bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-md font-medium transition">
