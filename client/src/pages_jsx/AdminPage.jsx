@@ -6,7 +6,8 @@ import {
   Shield, Lock, LogOut, Users, ClipboardList, Package, PenTool,
   Search, Trash2, ChevronDown, ChevronUp, Eye, Edit, Plus, Star,
   MessageSquare, Phone, Calendar, Mail, Home, HelpCircle, Settings,
-  FileText, Award, DollarSign, Image, MessageCircle, Layers, Save
+  FileText, Award, DollarSign, Image, MessageCircle, Layers, Save,
+  BarChart2, AlertCircle, Briefcase, CheckCircle, Sliders, Gift, Video
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { COMPANY_NAME, PRODUCT_CATEGORIES } from "@/lib/constants";
@@ -33,6 +35,10 @@ const AdminPage = () => {
   const [credentials, setCredentials] = useState({ username: "", password: "" });
   const [searchTerm, setSearchTerm] = useState("");
   const [expandedItem, setExpandedItem] = useState(null);
+  const [activeTab, setActiveTab] = useState("inquiries");
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [currentItem, setCurrentItem] = useState(null);
   const { toast } = useToast();
 
   // Check if user is already authenticated (from localStorage)
@@ -116,6 +122,82 @@ const AdminPage = () => {
     },
     enabled: isAuthenticated,
   });
+  
+  // Fetch all products
+  const {
+    data: products = [],
+    isLoading: isLoadingProducts,
+    isError: isProductsError,
+  } = useQuery({
+    queryKey: ["products"],
+    queryFn: async () => {
+      try {
+        const res = await apiRequest("GET", "/api/products");
+        return res.json().then(data => data.products || []);
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+        return [];
+      }
+    },
+    enabled: isAuthenticated,
+  });
+  
+  // Fetch all services
+  const {
+    data: services = [],
+    isLoading: isLoadingServices,
+    isError: isServicesError,
+  } = useQuery({
+    queryKey: ["services"],
+    queryFn: async () => {
+      try {
+        const res = await apiRequest("GET", "/api/services");
+        return await res.json();
+      } catch (error) {
+        console.error("Failed to fetch services:", error);
+        return [];
+      }
+    },
+    enabled: isAuthenticated,
+  });
+  
+  // Fetch all testimonials
+  const {
+    data: testimonials = [],
+    isLoading: isLoadingTestimonials,
+    isError: isTestimonialsError,
+  } = useQuery({
+    queryKey: ["testimonials"],
+    queryFn: async () => {
+      try {
+        const res = await apiRequest("GET", "/api/testimonials");
+        return await res.json();
+      } catch (error) {
+        console.error("Failed to fetch testimonials:", error);
+        return [];
+      }
+    },
+    enabled: isAuthenticated,
+  });
+  
+  // Fetch all FAQs
+  const {
+    data: faqs = [],
+    isLoading: isLoadingFaqs,
+    isError: isFaqsError,
+  } = useQuery({
+    queryKey: ["faqs"],
+    queryFn: async () => {
+      try {
+        const res = await apiRequest("GET", "/api/faqs");
+        return await res.json();
+      } catch (error) {
+        console.error("Failed to fetch FAQs:", error);
+        return [];
+      }
+    },
+    enabled: isAuthenticated,
+  });
 
   // Delete inquiry mutation
   const deleteInquiryMutation = useMutation({
@@ -158,6 +240,90 @@ const AdminPage = () => {
       });
     },
   });
+  
+  // Delete product mutation
+  const deleteProductMutation = useMutation({
+    mutationFn: async (id) => {
+      await apiRequest("DELETE", `/api/products/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["products"]);
+      toast({
+        title: "Product deleted",
+        description: "The product has been removed successfully.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Failed to delete",
+        description: "There was an error deleting the product.",
+        variant: "destructive",
+      });
+    },
+  });
+  
+  // Delete service mutation
+  const deleteServiceMutation = useMutation({
+    mutationFn: async (id) => {
+      await apiRequest("DELETE", `/api/services/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["services"]);
+      toast({
+        title: "Service deleted",
+        description: "The service has been removed successfully.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Failed to delete",
+        description: "There was an error deleting the service.",
+        variant: "destructive",
+      });
+    },
+  });
+  
+  // Delete testimonial mutation
+  const deleteTestimonialMutation = useMutation({
+    mutationFn: async (id) => {
+      await apiRequest("DELETE", `/api/testimonials/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["testimonials"]);
+      toast({
+        title: "Testimonial deleted",
+        description: "The testimonial has been removed successfully.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Failed to delete",
+        description: "There was an error deleting the testimonial.",
+        variant: "destructive",
+      });
+    },
+  });
+  
+  // Delete FAQ mutation
+  const deleteFaqMutation = useMutation({
+    mutationFn: async (id) => {
+      await apiRequest("DELETE", `/api/faqs/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["faqs"]);
+      toast({
+        title: "FAQ deleted",
+        description: "The FAQ has been removed successfully.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Failed to delete",
+        description: "There was an error deleting the FAQ.",
+        variant: "destructive",
+      });
+    },
+  });
 
   // Filter inquiries based on search term
   const filteredInquiries = inquiries.filter((inquiry) => {
@@ -168,6 +334,30 @@ const AdminPage = () => {
   // Filter contact submissions based on search term
   const filteredContacts = contactSubmissions.filter((contact) => {
     const searchable = `${contact.name} ${contact.phone} ${contact.email} ${contact.service} ${contact.message}`.toLowerCase();
+    return searchable.includes(searchTerm.toLowerCase());
+  });
+  
+  // Filter products based on search term
+  const filteredProducts = products.filter((product) => {
+    const searchable = `${product.name} ${product.description} ${product.category}`.toLowerCase();
+    return searchable.includes(searchTerm.toLowerCase());
+  });
+  
+  // Filter services based on search term
+  const filteredServices = services.filter((service) => {
+    const searchable = `${service.title} ${service.description} ${service.features?.join(' ')}`.toLowerCase();
+    return searchable.includes(searchTerm.toLowerCase());
+  });
+  
+  // Filter testimonials based on search term
+  const filteredTestimonials = testimonials.filter((testimonial) => {
+    const searchable = `${testimonial.name} ${testimonial.location} ${testimonial.content}`.toLowerCase();
+    return searchable.includes(searchTerm.toLowerCase());
+  });
+  
+  // Filter FAQs based on search term
+  const filteredFaqs = faqs.filter((faq) => {
+    const searchable = `${faq.question} ${faq.answer}`.toLowerCase();
     return searchable.includes(searchTerm.toLowerCase());
   });
 
@@ -438,6 +628,180 @@ const AdminPage = () => {
                 )}
               </TabsContent>
               
+              <TabsContent value="products">
+                <div className="mb-4 flex justify-between items-center">
+                  <h2 className="text-xl font-semibold text-gray-800">Products Management</h2>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button className="bg-orange-600 hover:bg-orange-700">
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add Product
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-2xl">
+                      <DialogHeader>
+                        <DialogTitle>Add New Product</DialogTitle>
+                      </DialogHeader>
+                      <div className="grid gap-4 py-4">
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="name">Product Name</Label>
+                            <Input id="name" placeholder="e.g. Waterproofing Solution" />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="price">Price (₹)</Label>
+                            <Input id="price" type="number" placeholder="2499" />
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="category">Category</Label>
+                          <Select>
+                            <SelectTrigger id="category">
+                              <SelectValue placeholder="Select category" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {PRODUCT_CATEGORIES.map((category) => (
+                                <SelectItem key={category.id} value={category.id}>
+                                  {category.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="image">Image URL</Label>
+                          <Input id="image" placeholder="https://example.com/image.jpg" />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="description">Description</Label>
+                          <Textarea id="description" placeholder="Describe the product..." className="min-h-[100px]" />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="flex items-center space-x-2">
+                            <Checkbox id="is-bestseller" />
+                            <Label htmlFor="is-bestseller">Bestseller</Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Checkbox id="is-new" />
+                            <Label htmlFor="is-new">New Product</Label>
+                          </div>
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <Button type="button" variant="outline">Cancel</Button>
+                        <Button type="submit" className="bg-orange-600 hover:bg-orange-700">
+                          <Save className="h-4 w-4 mr-2" />
+                          Save Product
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+
+                {isLoadingProducts ? (
+                  <div className="text-center py-12">
+                    <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-orange-400 border-r-transparent"></div>
+                    <p className="mt-2 text-gray-600">Loading products...</p>
+                  </div>
+                ) : isProductsError ? (
+                  <div className="text-center py-12 text-red-600">
+                    Error loading products. Please try again.
+                  </div>
+                ) : filteredProducts.length === 0 ? (
+                  <div className="text-center py-12 text-gray-500">
+                    {searchTerm ? "No products match your search." : "No products yet."}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {filteredProducts.map((product) => (
+                      <motion.div
+                        key={product.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <Card>
+                          <CardHeader className="p-4 pb-2">
+                            <div className="flex justify-between">
+                              <CardTitle className="text-lg font-semibold truncate">
+                                {product.name}
+                              </CardTitle>
+                              <div className="flex space-x-1">
+                                {product.isBestseller && (
+                                  <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200">
+                                    <Star className="h-3 w-3 mr-1" />
+                                    Bestseller
+                                  </Badge>
+                                )}
+                                {product.isNew && (
+                                  <Badge variant="secondary" className="bg-green-100 text-green-800 hover:bg-green-200">
+                                    New
+                                  </Badge>
+                                )}
+                              </div>
+                            </div>
+                            <CardDescription className="text-gray-500">
+                              {product.category}
+                            </CardDescription>
+                          </CardHeader>
+                          <CardContent className="p-4 pt-0">
+                            <div className="relative h-40 mb-3 bg-gray-100 rounded-md overflow-hidden">
+                              {product.image ? (
+                                <img
+                                  src={product.image}
+                                  alt={product.name}
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <div className="flex items-center justify-center h-full bg-gray-200">
+                                  <Image className="h-12 w-12 text-gray-400" />
+                                </div>
+                              )}
+                              <div className="absolute top-2 right-2 bg-white py-1 px-2 rounded-full font-semibold text-sm">
+                                ₹{product.price}
+                              </div>
+                            </div>
+                            <p className="text-sm text-gray-600 line-clamp-2 mb-2">
+                              {product.description}
+                            </p>
+                            <div className="flex items-center text-sm text-yellow-600">
+                              {Array(5).fill(0).map((_, i) => (
+                                <Star
+                                  key={i}
+                                  className={`h-4 w-4 ${i < product.rating ? 'fill-yellow-500' : 'text-gray-300'}`}
+                                />
+                              ))}
+                              <span className="ml-1 text-gray-600">({product.rating})</span>
+                            </div>
+                          </CardContent>
+                          <CardFooter className="p-4 pt-0 flex justify-between">
+                            <Button variant="outline" size="sm" className="text-gray-600">
+                              <Eye className="h-4 w-4 mr-1" />
+                              View
+                            </Button>
+                            <div className="space-x-2">
+                              <Button variant="outline" size="sm" className="text-blue-600">
+                                <Edit className="h-4 w-4 mr-1" />
+                                Edit
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="text-red-600"
+                                onClick={() => deleteProductMutation.mutate(product.id)}
+                              >
+                                <Trash2 className="h-4 w-4 mr-1" />
+                                Delete
+                              </Button>
+                            </div>
+                          </CardFooter>
+                        </Card>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
+              </TabsContent>
+              
               <TabsContent value="contacts">
                 {isLoadingContacts ? (
                   <div className="text-center py-12">
@@ -555,20 +919,285 @@ const AdminPage = () => {
                 )}
               </TabsContent>
               
-              <TabsContent value="products">
-                <ProductManager />
-              </TabsContent>
-              
               <TabsContent value="services">
-                <ServiceManager />
+                <div className="mb-4 flex justify-between items-center">
+                  <h2 className="text-xl font-semibold text-gray-800">Services Management</h2>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button className="bg-orange-600 hover:bg-orange-700">
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add Service
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-2xl">
+                      <DialogHeader>
+                        <DialogTitle>Add New Service</DialogTitle>
+                      </DialogHeader>
+                      <div className="grid gap-4 py-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="title">Service Title</Label>
+                          <Input id="title" placeholder="e.g. Waterproofing Services" />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="image">Image URL</Label>
+                          <Input id="image" placeholder="https://example.com/image.jpg" />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="description">Description</Label>
+                          <Textarea id="description" placeholder="Describe the service..." className="min-h-[100px]" />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="features">Features (one per line)</Label>
+                          <Textarea id="features" placeholder="Free inspection&#10;Quality materials&#10;5-year warranty" className="min-h-[100px]" />
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <Button type="button" variant="outline">Cancel</Button>
+                        <Button type="submit" className="bg-orange-600 hover:bg-orange-700">
+                          <Save className="h-4 w-4 mr-2" />
+                          Save Service
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+
+                {isLoadingServices ? (
+                  <div className="text-center py-12">
+                    <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-orange-400 border-r-transparent"></div>
+                    <p className="mt-2 text-gray-600">Loading services...</p>
+                  </div>
+                ) : isServicesError ? (
+                  <div className="text-center py-12 text-red-600">
+                    Error loading services. Please try again.
+                  </div>
+                ) : filteredServices.length === 0 ? (
+                  <div className="text-center py-12 text-gray-500">
+                    {searchTerm ? "No services match your search." : "No services yet."}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {filteredServices.map((service) => (
+                      <motion.div
+                        key={service.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <Card>
+                          <CardHeader className="pb-2">
+                            <div className="flex justify-between">
+                              <CardTitle className="text-lg font-semibold">
+                                {service.title}
+                              </CardTitle>
+                            </div>
+                          </CardHeader>
+                          <CardContent className="pt-0">
+                            <div className="h-40 mb-3 bg-gray-100 rounded-md overflow-hidden">
+                              {service.image ? (
+                                <img
+                                  src={service.image}
+                                  alt={service.title}
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <div className="flex items-center justify-center h-full bg-gray-200">
+                                  <Image className="h-12 w-12 text-gray-400" />
+                                </div>
+                              )}
+                            </div>
+                            <p className="text-sm text-gray-600 line-clamp-2 mb-2">
+                              {service.description}
+                            </p>
+                            {service.features && service.features.length > 0 && (
+                              <div className="mt-3">
+                                <h4 className="text-sm font-medium text-gray-700 mb-2">Features:</h4>
+                                <ul className="text-sm text-gray-600 space-y-1">
+                                  {service.features.slice(0, 3).map((feature, index) => (
+                                    <li key={index} className="flex items-start">
+                                      <CheckCircle className="h-4 w-4 text-green-500 mr-2 mt-0.5" />
+                                      <span className="line-clamp-1">{feature}</span>
+                                    </li>
+                                  ))}
+                                  {service.features.length > 3 && (
+                                    <li className="text-orange-600 text-xs">
+                                      +{service.features.length - 3} more features
+                                    </li>
+                                  )}
+                                </ul>
+                              </div>
+                            )}
+                          </CardContent>
+                          <CardFooter className="pt-0 flex justify-end gap-2">
+                            <Button variant="outline" size="sm" className="text-blue-600">
+                              <Edit className="h-4 w-4 mr-1" />
+                              Edit
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="text-red-600"
+                              onClick={() => deleteServiceMutation.mutate(service.id)}
+                            >
+                              <Trash2 className="h-4 w-4 mr-1" />
+                              Delete
+                            </Button>
+                          </CardFooter>
+                        </Card>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
               </TabsContent>
               
               <TabsContent value="testimonials">
-                <TestimonialManager />
+                <div className="mb-4 flex justify-between items-center">
+                  <h2 className="text-xl font-semibold text-gray-800">Testimonials Management</h2>
+                  <Button className="bg-orange-600 hover:bg-orange-700">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Testimonial
+                  </Button>
+                </div>
+
+                {isLoadingTestimonials ? (
+                  <div className="text-center py-12">
+                    <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-orange-400 border-r-transparent"></div>
+                    <p className="mt-2 text-gray-600">Loading testimonials...</p>
+                  </div>
+                ) : isTestimonialsError ? (
+                  <div className="text-center py-12 text-red-600">
+                    Error loading testimonials. Please try again.
+                  </div>
+                ) : filteredTestimonials.length === 0 ? (
+                  <div className="text-center py-12 text-gray-500">
+                    {searchTerm ? "No testimonials match your search." : "No testimonials yet."}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {filteredTestimonials.map((testimonial) => (
+                      <motion.div
+                        key={testimonial.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="bg-white rounded-lg shadow-sm border border-gray-200 hover:border-orange-200 hover:shadow-md transition-all"
+                      >
+                        <div className="p-5">
+                          <div className="flex justify-between items-start mb-3">
+                            <div>
+                              <div className="flex">
+                                {Array(5).fill(0).map((_, i) => (
+                                  <Star
+                                    key={i}
+                                    className={`h-4 w-4 ${i < testimonial.rating ? 'text-yellow-400' : 'text-gray-300'}`}
+                                    fill={i < testimonial.rating ? 'currentColor' : 'none'}
+                                  />
+                                ))}
+                              </div>
+                              <h3 className="font-medium text-gray-900 mt-1">{testimonial.name}</h3>
+                              <div className="text-sm text-gray-500">{testimonial.location}</div>
+                            </div>
+                            <div className="flex">
+                              {testimonial.hasVideo && (
+                                <Badge variant="secondary" className="ml-2 bg-red-100 text-red-800 hover:bg-red-200">
+                                  <Video className="h-3 w-3 mr-1" />
+                                  Video
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+                          
+                          <blockquote className="text-gray-600 text-sm italic mb-4 border-l-2 border-gray-200 pl-3">
+                            "{testimonial.content}"
+                          </blockquote>
+                          
+                          <div className="flex justify-end space-x-2">
+                            <Button variant="outline" size="sm" className="text-blue-600">
+                              <Edit className="h-4 w-4 mr-1" />
+                              Edit
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="text-red-600"
+                              onClick={() => deleteTestimonialMutation.mutate(testimonial.id)}
+                            >
+                              <Trash2 className="h-4 w-4 mr-1" />
+                              Delete
+                            </Button>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
               </TabsContent>
               
               <TabsContent value="faqs">
-                <FAQManager />
+                <div className="mb-4 flex justify-between items-center">
+                  <h2 className="text-xl font-semibold text-gray-800">FAQs Management</h2>
+                  <Button className="bg-orange-600 hover:bg-orange-700">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add FAQ
+                  </Button>
+                </div>
+
+                {isLoadingFaqs ? (
+                  <div className="text-center py-12">
+                    <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-orange-400 border-r-transparent"></div>
+                    <p className="mt-2 text-gray-600">Loading FAQs...</p>
+                  </div>
+                ) : isFaqsError ? (
+                  <div className="text-center py-12 text-red-600">
+                    Error loading FAQs. Please try again.
+                  </div>
+                ) : filteredFaqs.length === 0 ? (
+                  <div className="text-center py-12 text-gray-500">
+                    {searchTerm ? "No FAQs match your search." : "No FAQs yet."}
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {filteredFaqs.map((faq) => (
+                      <motion.div
+                        key={faq.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <Accordion type="single" collapsible className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                          <AccordionItem value={`faq-${faq.id}`} className="border-0">
+                            <div className="flex items-center justify-between px-4 py-3">
+                              <AccordionTrigger className="flex-1 text-left">
+                                <div className="font-medium">{faq.question}</div>
+                              </AccordionTrigger>
+                              <div className="flex gap-2 ml-4">
+                                <Button variant="outline" size="sm" className="text-blue-600">
+                                  <Edit className="h-4 w-4 mr-1" />
+                                  Edit
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="text-red-600"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    deleteFaqMutation.mutate(faq.id);
+                                  }}
+                                >
+                                  <Trash2 className="h-4 w-4 mr-1" />
+                                  Delete
+                                </Button>
+                              </div>
+                            </div>
+                            <AccordionContent className="px-4 pb-3 pt-1 text-sm text-gray-600">
+                              {faq.answer}
+                            </AccordionContent>
+                          </AccordionItem>
+                        </Accordion>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
               </TabsContent>
             </Tabs>
           </div>
