@@ -8,6 +8,7 @@ import Faq from "@/components/home/Faq";
 import About from "@/components/home/About";
 import ContactSection from "@/components/home/ContactSection";
 import Cta from "@/components/home/Cta";
+import HomePageForm from "@/components/HomePageForm";
 import { useEffect } from "react";
 
 const HomePage = () => {
@@ -27,6 +28,7 @@ const HomePage = () => {
       <About />
       <ContactSection />
       <Cta />
+      <HomePageForm />
     </div>
   );
 };
