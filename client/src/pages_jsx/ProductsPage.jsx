@@ -1,30 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link } from "wouter";
-import { PRODUCT_CATEGORIES, FEATURED_PRODUCTS } from "@/lib/constants";
+import { PRODUCT_CATEGORIES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
-
-// Generate more products based on the featured ones
-const generateMoreProducts = () => {
-  const products = [...FEATURED_PRODUCTS];
-  
-  // Create variations of the featured products to simulate more products
-  for (let i = 0; i < 20; i++) {
-    const baseProd = FEATURED_PRODUCTS[i % FEATURED_PRODUCTS.length];
-    products.push({
-      ...baseProd,
-      id: FEATURED_PRODUCTS.length + i + 1,
-      name: `${baseProd.name} ${i % 3 === 0 ? 'Premium' : i % 3 === 1 ? 'Plus' : 'Advanced'}`,
-      price: baseProd.price + (i * 100) % 500,
-      isBestseller: i % 10 === 0,
-      isNew: i % 7 === 0,
-      rating: Math.min(5, baseProd.rating - 0.1 + Math.random() * 0.3)
-    });
-  }
-  
-  return products;
-};
-
-const ALL_PRODUCTS = generateMoreProducts();
+import { useQuery } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
 
 const ProductsPage = () => {
   const [activeCategory, setActiveCategory] = useState("all");
@@ -32,19 +11,29 @@ const ProductsPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 12;
   
+  // Fetch products from API
+  const { data: productsData, isLoading, error } = useQuery({
+    queryKey: ['/api/products'],
+    queryFn: async () => {
+      const response = await fetch('/api/products');
+      const data = await response.json();
+      return data.products || [];
+    }
+  });
+  
   useEffect(() => {
     document.title = "Our Products | OM Vinayaga Associates";
     setCurrentPage(1); // Reset to first page when category changes
   }, [activeCategory, searchTerm]);
   
   // Filter products based on search term and category
-  const filteredProducts = ALL_PRODUCTS.filter(product => {
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                         product.description.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredProducts = productsData ? productsData.filter(product => {
+    const matchesSearch = product.name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                         product.description?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = activeCategory === "all" || product.category === activeCategory;
     
     return matchesSearch && matchesCategory;
-  });
+  }) : [];
   
   // Paginate products
   const indexOfLastProduct = currentPage * productsPerPage;
@@ -131,126 +120,147 @@ const ProductsPage = () => {
             
             {/* Products Grid */}
             <div className="w-full md:w-3/4">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="font-bold text-xl">
-                  {filteredProducts.length} {filteredProducts.length === 1 ? 'Product' : 'Products'}
-                </h2>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-500">Sort by:</span>
-                  <select className="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
-                    <option>Popularity</option>
-                    <option>Price: Low to High</option>
-                    <option>Price: High to Low</option>
-                    <option>Rating</option>
-                  </select>
+              {isLoading ? (
+                <div className="flex justify-center items-center min-h-[400px]">
+                  <Loader2 className="h-10 w-10 animate-spin text-primary" />
                 </div>
-              </div>
-              
-              {filteredProducts.length === 0 ? (
-                <div className="bg-white rounded-lg shadow p-8 text-center">
-                  <i className="fas fa-search text-gray-300 text-5xl mb-4"></i>
-                  <h3 className="text-xl font-bold mb-2">No products found</h3>
-                  <p className="text-gray-600 mb-4">Try changing your search criteria or browse all products</p>
-                  <button 
-                    onClick={() => {
-                      setSearchTerm("");
-                      setActiveCategory("all");
-                    }}
-                    className="bg-primary text-white px-4 py-2 rounded-md font-medium hover:bg-primary/90 transition"
-                  >
-                    View All Products
-                  </button>
+              ) : error ? (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+                  <h3 className="text-lg font-semibold text-red-800 mb-2">Error Loading Products</h3>
+                  <p className="text-red-600">There was an error loading the products. Please try again later.</p>
                 </div>
               ) : (
                 <>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {currentProducts.map((product) => (
-                      <div key={product.id} className="bg-white rounded-xl shadow-lg overflow-hidden group">
-                        <div className="relative h-64 overflow-hidden">
-                          <div className="w-full h-full bg-gray-300 group-hover:scale-105 transition-transform duration-300"></div>
-                          {product.isBestseller && (
-                            <div className="absolute top-3 left-3 bg-primary text-white text-xs px-2 py-1 rounded">BESTSELLER</div>
-                          )}
-                          {product.isNew && (
-                            <div className="absolute top-3 left-3 bg-green-600 text-white text-xs px-2 py-1 rounded">NEW</div>
-                          )}
-                        </div>
-                        <div className="p-5">
-                          <div className="flex justify-between items-start mb-2">
-                            <h3 className="font-montserrat font-semibold text-lg">{product.name}</h3>
-                            <div className="flex items-center">
-                              <i className="fas fa-star text-yellow-400 text-xs"></i>
-                              <span className="text-sm ml-1">{product.rating.toFixed(1)}</span>
-                            </div>
-                          </div>
-                          <p className="text-sm text-gray-600 mb-3">{product.description}</p>
-                          <div className="flex justify-between items-center">
-                            <span className="font-medium text-primary">₹{product.price.toLocaleString('en-IN')}</span>
-                            <Link href={`/products/${product.id}`}>
-                              <a className="bg-primary hover:bg-primary/90 text-white px-3 py-1 rounded text-sm transition">
-                                View Details
-                              </a>
-                            </Link>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
+                  <div className="flex justify-between items-center mb-6">
+                    <h2 className="font-bold text-xl">
+                      {filteredProducts.length} {filteredProducts.length === 1 ? 'Product' : 'Products'}
+                    </h2>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-gray-500">Sort by:</span>
+                      <select className="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <option>Popularity</option>
+                        <option>Price: Low to High</option>
+                        <option>Price: High to Low</option>
+                        <option>Rating</option>
+                      </select>
+                    </div>
                   </div>
                   
-                  {/* Pagination */}
-                  {totalPages > 1 && (
-                    <div className="mt-10 flex justify-center">
-                      <div className="flex space-x-1">
-                        <button 
-                          onClick={() => handlePageChange(currentPage - 1)}
-                          disabled={currentPage === 1}
-                          className="px-4 py-2 border rounded-md text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          <i className="fas fa-chevron-left"></i>
-                        </button>
-                        
-                        {[...Array(totalPages)].map((_, i) => {
-                          const pageNum = i + 1;
-                          
-                          // Show first page, last page, current page and one page before and after current
-                          if (
-                            pageNum === 1 || 
-                            pageNum === totalPages || 
-                            (pageNum >= currentPage - 1 && pageNum <= currentPage + 1)
-                          ) {
-                            return (
-                              <button 
-                                key={pageNum}
-                                onClick={() => handlePageChange(pageNum)}
-                                className={cn(
-                                  "px-4 py-2 border rounded-md text-sm font-medium",
-                                  currentPage === pageNum 
-                                    ? "bg-primary text-white" 
-                                    : "hover:bg-gray-50"
-                                )}
-                              >
-                                {pageNum}
-                              </button>
-                            );
-                          } else if (
-                            pageNum === 2 || 
-                            pageNum === totalPages - 1
-                          ) {
-                            return <span key={pageNum} className="px-4 py-2">...</span>;
-                          }
-                          
-                          return null;
-                        })}
-                        
-                        <button 
-                          onClick={() => handlePageChange(currentPage + 1)}
-                          disabled={currentPage === totalPages}
-                          className="px-4 py-2 border rounded-md text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          <i className="fas fa-chevron-right"></i>
-                        </button>
-                      </div>
+                  {filteredProducts.length === 0 ? (
+                    <div className="bg-white rounded-lg shadow p-8 text-center">
+                      <i className="fas fa-search text-gray-300 text-5xl mb-4"></i>
+                      <h3 className="text-xl font-bold mb-2">No products found</h3>
+                      <p className="text-gray-600 mb-4">Try changing your search criteria or browse all products</p>
+                      <button 
+                        onClick={() => {
+                          setSearchTerm("");
+                          setActiveCategory("all");
+                        }}
+                        className="bg-primary text-white px-4 py-2 rounded-md font-medium hover:bg-primary/90 transition"
+                      >
+                        View All Products
+                      </button>
                     </div>
+                  ) : (
+                    <>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {currentProducts.map((product) => (
+                          <div key={product.id} className="bg-white rounded-xl shadow-lg overflow-hidden group">
+                            <div className="relative h-64 overflow-hidden">
+                              {product.image ? (
+                                <img 
+                                  src={product.image} 
+                                  alt={product.name} 
+                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                />
+                              ) : (
+                                <div className="w-full h-full bg-gray-300 group-hover:scale-105 transition-transform duration-300"></div>
+                              )}
+                              {product.isBestseller && (
+                                <div className="absolute top-3 left-3 bg-primary text-white text-xs px-2 py-1 rounded">BESTSELLER</div>
+                              )}
+                              {product.isNew && (
+                                <div className="absolute top-3 left-3 bg-green-600 text-white text-xs px-2 py-1 rounded">NEW</div>
+                              )}
+                            </div>
+                            <div className="p-5">
+                              <div className="flex justify-between items-start mb-2">
+                                <h3 className="font-montserrat font-semibold text-lg">{product.name}</h3>
+                                <div className="flex items-center">
+                                  <i className="fas fa-star text-yellow-400 text-xs"></i>
+                                  <span className="text-sm ml-1">{product.rating?.toFixed(1) || "N/A"}</span>
+                                </div>
+                              </div>
+                              <p className="text-sm text-gray-600 mb-3">{product.description}</p>
+                              <div className="flex justify-between items-center">
+                                <span className="font-medium text-primary">₹{product.price?.toLocaleString('en-IN') || 0}</span>
+                                <Link href={`/products/${product.id}`}>
+                                  <a className="bg-primary hover:bg-primary/90 text-white px-3 py-1 rounded text-sm transition">
+                                    View Details
+                                  </a>
+                                </Link>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      
+                      {/* Pagination */}
+                      {totalPages > 1 && (
+                        <div className="mt-10 flex justify-center">
+                          <div className="flex space-x-1">
+                            <button 
+                              onClick={() => handlePageChange(currentPage - 1)}
+                              disabled={currentPage === 1}
+                              className="px-4 py-2 border rounded-md text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              <i className="fas fa-chevron-left"></i>
+                            </button>
+                            
+                            {[...Array(totalPages)].map((_, i) => {
+                              const pageNum = i + 1;
+                              
+                              // Show first page, last page, current page and one page before and after current
+                              if (
+                                pageNum === 1 || 
+                                pageNum === totalPages || 
+                                (pageNum >= currentPage - 1 && pageNum <= currentPage + 1)
+                              ) {
+                                return (
+                                  <button 
+                                    key={pageNum}
+                                    onClick={() => handlePageChange(pageNum)}
+                                    className={cn(
+                                      "px-4 py-2 border rounded-md text-sm font-medium",
+                                      currentPage === pageNum 
+                                        ? "bg-primary text-white" 
+                                        : "hover:bg-gray-50"
+                                    )}
+                                  >
+                                    {pageNum}
+                                  </button>
+                                );
+                              } else if (
+                                pageNum === 2 || 
+                                pageNum === totalPages - 1
+                              ) {
+                                return <span key={pageNum} className="px-4 py-2">...</span>;
+                              }
+                              
+                              return null;
+                            })}
+                            
+                            <button 
+                              onClick={() => handlePageChange(currentPage + 1)}
+                              disabled={currentPage === totalPages}
+                              className="px-4 py-2 border rounded-md text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              <i className="fas fa-chevron-right"></i>
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </>
                   )}
                 </>
               )}
