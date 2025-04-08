@@ -31,14 +31,8 @@ const HomePageForm = () => {
     "Other Issues"
   ];
 
-  useEffect(() => {
-    // Show the form after a short delay when the page loads
-    const timer = setTimeout(() => {
-      setIsOpen(true);
-    }, 3000);
-
-    return () => clearTimeout(timer);
-  }, []);
+  // The form will now be controlled by parent component
+  // We're removing the auto-open effect that was causing duplicates
 
   const handleChange = (e) => {
     const { name, value } = e.target;

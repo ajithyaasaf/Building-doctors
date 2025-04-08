@@ -9,12 +9,31 @@ import About from "@/components/home/About";
 import ContactSection from "@/components/home/ContactSection";
 import Cta from "@/components/home/Cta";
 import HomePageForm from "@/components/HomePageForm";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const HomePage = () => {
+  const [showForm, setShowForm] = useState(false);
+  
   useEffect(() => {
     document.title = "OM Vinayaga Associates | Building Doctor Franchise";
+    
+    // Show the form after a short delay when the page loads
+    const timer = setTimeout(() => {
+      setShowForm(true);
+    }, 3000);
+
+    return () => clearTimeout(timer);
   }, []);
+
+  // Manually control the HomePageForm component
+  const HomePageFormComponent = () => {
+    const formComponent = <HomePageForm />;
+    // This makes sure the form only renders once the showForm state is true
+    if (showForm) {
+      return formComponent;
+    }
+    return null;
+  };
 
   return (
     <div>
@@ -28,7 +47,7 @@ const HomePage = () => {
       <About />
       <ContactSection />
       <Cta />
-      <HomePageForm />
+      <HomePageFormComponent />
     </div>
   );
 };
