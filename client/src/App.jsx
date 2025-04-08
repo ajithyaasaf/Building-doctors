@@ -13,6 +13,7 @@ import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
 import WhatsappButton from "./components/WhatsappButton";
 import HomePageForm from "./components/HomePageForm";
+import ExitIntentPopup from "./components/ExitIntentPopup";
 import { pageTransition } from "./utils/animations";
 
 function App() {
@@ -88,6 +89,7 @@ function App() {
       <Footer />
       <WhatsappButton />
       {showPopupForm && <HomePageForm />}
+      <ExitIntentPopup />
       <Toaster />
     </div>
   );
