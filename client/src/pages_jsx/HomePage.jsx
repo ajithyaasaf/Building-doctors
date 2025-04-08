@@ -10,6 +10,7 @@ import ContactSection from "@/components/home/ContactSection";
 import Cta from "@/components/home/Cta";
 import HomePageForm from "@/components/HomePageForm";
 import { useEffect, useState } from "react";
+import PointsDisplay from "@/components/gamification/PointsDisplay";
 
 const HomePage = () => {
   const [showForm, setShowForm] = useState(false);

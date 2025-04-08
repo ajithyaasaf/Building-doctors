@@ -9,10 +9,13 @@ import ProductDetailPage from "./pages_jsx/ProductDetailPage.jsx";
 import AboutPage from "./pages_jsx/AboutPage.jsx";
 import ContactPage from "./pages_jsx/ContactPage.jsx";
 import AdminPage from "./pages_jsx/AdminPage.jsx";
+import RewardsPage from "./pages_jsx/RewardsPage.jsx";
 import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
 import WhatsappButton from "./components/WhatsappButton";
 import HomePageForm from "./components/HomePageForm";
+import { GamificationProvider } from "./components/gamification/GamificationContext";
+import PointsDisplay from "./components/gamification/PointsDisplay";
 import { pageTransition } from "./utils/animations";
 
 function App() {
@@ -35,61 +38,68 @@ function App() {
   const showPopupForm = location === "/";
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
-      <main className="flex-grow">
-        <AnimatePresence mode="wait">
-          <Switch key={location} location={location}>
-            <Route path="/">
-              <PageWrapper>
-                <HomePage />
-              </PageWrapper>
-            </Route>
-            <Route path="/services">
-              <PageWrapper>
-                <ServicesPage />
-              </PageWrapper>
-            </Route>
-            <Route path="/products">
-              <PageWrapper>
-                <ProductsPage />
-              </PageWrapper>
-            </Route>
-            <Route path="/products/:id">
-              {(params) => (
+    <GamificationProvider>
+      <div className="flex flex-col min-h-screen">
+        <Header />
+        <main className="flex-grow">
+          <AnimatePresence mode="wait">
+            <Switch key={location} location={location}>
+              <Route path="/">
                 <PageWrapper>
-                  <ProductDetailPage params={params} />
+                  <HomePage />
                 </PageWrapper>
-              )}
-            </Route>
-            <Route path="/about">
-              <PageWrapper>
-                <AboutPage />
-              </PageWrapper>
-            </Route>
-            <Route path="/contact">
-              <PageWrapper>
-                <ContactPage />
-              </PageWrapper>
-            </Route>
-            <Route path="/admin">
-              <PageWrapper>
-                <AdminPage />
-              </PageWrapper>
-            </Route>
-            <Route>
-              <PageWrapper>
-                <NotFound />
-              </PageWrapper>
-            </Route>
-          </Switch>
-        </AnimatePresence>
-      </main>
-      <Footer />
-      <WhatsappButton />
-      {showPopupForm && <HomePageForm />}
-      <Toaster />
-    </div>
+              </Route>
+              <Route path="/services">
+                <PageWrapper>
+                  <ServicesPage />
+                </PageWrapper>
+              </Route>
+              <Route path="/products">
+                <PageWrapper>
+                  <ProductsPage />
+                </PageWrapper>
+              </Route>
+              <Route path="/products/:id">
+                {(params) => (
+                  <PageWrapper>
+                    <ProductDetailPage params={params} />
+                  </PageWrapper>
+                )}
+              </Route>
+              <Route path="/about">
+                <PageWrapper>
+                  <AboutPage />
+                </PageWrapper>
+              </Route>
+              <Route path="/contact">
+                <PageWrapper>
+                  <ContactPage />
+                </PageWrapper>
+              </Route>
+              <Route path="/rewards">
+                <PageWrapper>
+                  <RewardsPage />
+                </PageWrapper>
+              </Route>
+              <Route path="/admin">
+                <PageWrapper>
+                  <AdminPage />
+                </PageWrapper>
+              </Route>
+              <Route>
+                <PageWrapper>
+                  <NotFound />
+                </PageWrapper>
+              </Route>
+            </Switch>
+          </AnimatePresence>
+        </main>
+        <Footer />
+        <WhatsappButton />
+        <PointsDisplay />
+        <Toaster />
+      </div>
+    </GamificationProvider>
   );
 }
 
