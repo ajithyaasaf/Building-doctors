@@ -10,7 +10,6 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import { useGamification } from "./gamification/GamificationContext";
 
 const HomePageForm = ({ isOpen: externalIsOpen, onClose }) => {
   // Use external isOpen prop if provided, otherwise use internal state
@@ -40,7 +39,6 @@ const HomePageForm = ({ isOpen: externalIsOpen, onClose }) => {
   });
   
   const { toast } = useToast();
-  const { trackAction } = useGamification();
   
   // Sync with external isOpen prop when it changes
   useEffect(() => {
@@ -109,9 +107,6 @@ const HomePageForm = ({ isOpen: externalIsOpen, onClose }) => {
       setIsSubmitting(true);
       await apiRequest("POST", "/api/inquiries", inquiryData);
       
-      // Track the action in gamification system
-      trackAction('SUBMIT_INQUIRY');
-      
       // Reset form and show success
       setInquiryData({
         name: "",
@@ -124,7 +119,7 @@ const HomePageForm = ({ isOpen: externalIsOpen, onClose }) => {
       
       toast({
         title: "Inquiry submitted!",
-        description: "Our team will contact you shortly. You earned 10 points!",
+        description: "Our team will contact you shortly.",
       });
       
       // Invalidate any inquiries cache to refresh admin panel
@@ -171,9 +166,6 @@ const HomePageForm = ({ isOpen: externalIsOpen, onClose }) => {
       // Use the correct API endpoint: /api/contacts (not /api/contact)
       await apiRequest("POST", "/api/contacts", contactData);
       
-      // Track the action in gamification system
-      trackAction('SUBMIT_CONTACT');
-      
       // Reset form and show success
       setContactData({
         name: "",
@@ -186,7 +178,7 @@ const HomePageForm = ({ isOpen: externalIsOpen, onClose }) => {
       
       toast({
         title: "Message sent!",
-        description: "We'll get back to you as soon as possible. You earned 15 points!",
+        description: "We'll get back to you as soon as possible.",
       });
       
       // Invalidate any contacts cache to refresh admin panel
