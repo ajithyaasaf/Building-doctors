@@ -205,7 +205,7 @@ const HomePageForm = ({ isOpen: externalIsOpen, onClose }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-2 sm:p-4"
           onClick={() => {
             setIsOpen(false);
             if (onClose) onClose();
@@ -215,12 +215,12 @@ const HomePageForm = ({ isOpen: externalIsOpen, onClose }) => {
             initial={{ scale: 0.9, y: 20 }}
             animate={{ scale: 1, y: 0 }}
             exit={{ scale: 0.9, y: 20 }}
-            className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden"
+            className="bg-white rounded-xl shadow-xl w-full max-w-[95%] sm:max-w-md max-h-[90vh] sm:max-h-[85vh] overflow-auto"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Form Header */}
-            <div className="bg-gradient-to-r from-orange-500 to-orange-600 p-4 flex justify-between items-center">
-              <h2 className="text-white font-bold text-lg">
+            <div className="bg-gradient-to-r from-orange-500 to-orange-600 p-3 sm:p-4 flex justify-between items-center sticky top-0 z-10">
+              <h2 className="text-white font-bold text-base sm:text-lg">
                 {activeTab === "inquiry" ? "Building Doctor Consultation" : "Contact Us"}
               </h2>
               <button
@@ -230,11 +230,11 @@ const HomePageForm = ({ isOpen: externalIsOpen, onClose }) => {
                 }}
                 className="text-white hover:bg-white/20 rounded-full p-1"
               >
-                <X size={20} />
+                <X size={18} />
               </button>
             </div>
 
-            <div className="p-5">
+            <div className="p-3 sm:p-5">
               <Tabs defaultValue="inquiry" value={activeTab} onValueChange={setActiveTab} className="mb-4">
                 <TabsList className="grid w-full grid-cols-2">
                   <TabsTrigger value="inquiry" className="flex items-center gap-2">
@@ -250,16 +250,16 @@ const HomePageForm = ({ isOpen: externalIsOpen, onClose }) => {
                 <TabsContent value="inquiry">
                   {currentStep === 0 ? (
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
-                        <HelpCircle size={18} className="text-orange-500 mr-2" />
-                        What issue are you facing?
+                      <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                        <HelpCircle size={16} className="text-orange-500 mr-2 flex-shrink-0" />
+                        <span>What issue are you facing?</span>
                       </h3>
                       
-                      <div className="grid grid-cols-2 gap-3 mb-4">
+                      <div className="grid grid-cols-1 xs:grid-cols-2 gap-2 sm:gap-3 mb-4">
                         {issueTypes.map((issue) => (
                           <button
                             key={issue}
-                            className="bg-orange-50 hover:bg-orange-100 text-orange-700 p-3 rounded-lg text-sm font-medium transition-colors text-left border border-orange-200 hover:border-orange-300"
+                            className="bg-orange-50 hover:bg-orange-100 text-orange-700 p-2 sm:p-3 rounded-lg text-xs sm:text-sm font-medium transition-colors text-left border border-orange-200 hover:border-orange-300"
                             onClick={() => handleIssueSelect(issue)}
                           >
                             {issue}
@@ -277,13 +277,13 @@ const HomePageForm = ({ isOpen: externalIsOpen, onClose }) => {
                     </div>
                   ) : (
                     <form onSubmit={handleInquirySubmit}>
-                      <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                      <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-4">
                         {inquiryData.issueType ? (
-                          <div className="flex items-center justify-between">
-                            <span>Let us fix your {inquiryData.issueType}</span>
+                          <div className="flex items-center justify-between flex-wrap gap-2">
+                            <span className="mr-2">Let us fix your {inquiryData.issueType}</span>
                             <button
                               type="button"
-                              className="text-xs text-orange-600 hover:text-orange-700"
+                              className="text-xs text-orange-600 hover:text-orange-700 whitespace-nowrap"
                               onClick={() => setCurrentStep(0)}
                             >
                               Change issue
@@ -385,9 +385,9 @@ const HomePageForm = ({ isOpen: externalIsOpen, onClose }) => {
                 
                 <TabsContent value="contact">
                   <form onSubmit={handleContactSubmit}>
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                      <FilePlus className="h-5 w-5 text-orange-500 mr-2" />
-                      Send Us A Message
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                      <FilePlus className="h-5 w-5 text-orange-500 mr-2 flex-shrink-0" />
+                      <span>Send Us A Message</span>
                     </h3>
                     
                     <div className="space-y-4">
