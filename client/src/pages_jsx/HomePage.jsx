@@ -26,7 +26,7 @@ const HomePage = () => {
   }, []);
 
   return (
-    <div>
+    <div className="w-full overflow-hidden">
       <Hero />
       <Benefits />
       <Services />
