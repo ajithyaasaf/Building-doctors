@@ -2,12 +2,14 @@ import { useState, useEffect } from "react";
 import { useLocation, Link } from "wouter";
 import { motion } from "framer-motion";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { CSVLink } from "react-csv";
 import { 
   Shield, Lock, LogOut, Users, ClipboardList, Package, PenTool,
   Search, Trash2, ChevronDown, ChevronUp, Eye, Edit, Plus, Star,
   MessageSquare, Phone, Calendar, Mail, Home, HelpCircle, Settings,
   FileText, Award, DollarSign, Image, MessageCircle, Layers, Save,
-  BarChart2, AlertCircle, Briefcase, CheckCircle, Sliders, Gift, Video
+  BarChart2, AlertCircle, Briefcase, CheckCircle, Sliders, Gift, Video,
+  Download, Filter, ArrowUpDown
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -39,6 +41,10 @@ const AdminPage = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [currentItem, setCurrentItem] = useState(null);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
+  const [sortOrder, setSortOrder] = useState("desc"); // Default to newest first
   const { toast } = useToast();
 
   // Check if user is already authenticated (from localStorage)
@@ -371,6 +377,50 @@ const AdminPage = () => {
     const date = new Date(dateString);
     return date.toLocaleString();
   };
+  
+  // Format date for input fields
+  const formatDateForInput = (date) => {
+    return date ? new Date(date).toISOString().split('T')[0] : "";
+  };
+  
+  // Filter data by date range
+  const filterByDateRange = (data, startDate, endDate) => {
+    if (!startDate && !endDate) return data;
+    
+    return data.filter(item => {
+      const itemDate = new Date(item.createdAt);
+      
+      if (startDate && endDate) {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        // Set end date to end of day
+        end.setHours(23, 59, 59, 999);
+        return itemDate >= start && itemDate <= end;
+      } else if (startDate) {
+        const start = new Date(startDate);
+        return itemDate >= start;
+      } else if (endDate) {
+        const end = new Date(endDate);
+        // Set end date to end of day
+        end.setHours(23, 59, 59, 999);
+        return itemDate <= end;
+      }
+      
+      return true;
+    });
+  };
+  
+  // Sort data by created date
+  const sortByDate = (data, order = "desc") => {
+    return [...data].sort((a, b) => {
+      const dateA = new Date(a.createdAt);
+      const dateB = new Date(b.createdAt);
+      
+      return order === "desc" 
+        ? dateB - dateA // newest first
+        : dateA - dateB; // oldest first
+    });
+  };
 
   if (!isAuthenticated) {
     return (
@@ -464,17 +514,81 @@ const AdminPage = () => {
         
         <div className="bg-white rounded-xl shadow-md overflow-hidden mb-8">
           <div className="p-6">
-            <div className="relative mb-6">
-              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                <Search className="h-5 w-5 text-gray-400" />
+            <div className="flex flex-col sm:flex-row gap-4 mb-6">
+              <div className="relative flex-1">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <Search className="h-5 w-5 text-gray-400" />
+                </div>
+                <Input
+                  type="text"
+                  placeholder="Search by name, phone, email or issue..."
+                  className="pl-10"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
               </div>
-              <Input
-                type="text"
-                placeholder="Search by name, phone, email or issue..."
-                className="pl-10"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
+              <div className="flex gap-2">
+                <Dialog open={isFilterDialogOpen} onOpenChange={setIsFilterDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" className="flex items-center gap-2">
+                      <Filter className="h-4 w-4" />
+                      Date Filter
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>Filter by Date Range</DialogTitle>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="start-date">Start Date</Label>
+                          <Input 
+                            id="start-date" 
+                            type="date" 
+                            value={startDate}
+                            onChange={(e) => setStartDate(e.target.value)}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="end-date">End Date</Label>
+                          <Input 
+                            id="end-date" 
+                            type="date" 
+                            value={endDate}
+                            onChange={(e) => setEndDate(e.target.value)}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <Button 
+                        variant="outline" 
+                        onClick={() => {
+                          setStartDate("");
+                          setEndDate("");
+                        }}
+                      >
+                        Clear
+                      </Button>
+                      <Button 
+                        onClick={() => setIsFilterDialogOpen(false)}
+                      >
+                        Apply Filter
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+                
+                <Button
+                  variant="outline"
+                  onClick={() => setSortOrder(sortOrder === "desc" ? "asc" : "desc")}
+                  className="flex items-center gap-2"
+                >
+                  <ArrowUpDown className="h-4 w-4" />
+                  {sortOrder === "desc" ? "Newest First" : "Oldest First"}
+                </Button>
+              </div>
             </div>
             
             <Tabs defaultValue="inquiries">
@@ -506,6 +620,30 @@ const AdminPage = () => {
               </TabsList>
               
               <TabsContent value="inquiries">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-xl font-semibold text-gray-800">Inquiries</h2>
+                  
+                  {!isLoading && !isError && filteredInquiries.length > 0 && (
+                    <CSVLink 
+                      data={filterByDateRange(filteredInquiries, startDate, endDate).map(inquiry => ({
+                        ID: inquiry.id,
+                        Name: inquiry.name,
+                        Phone: inquiry.phone,
+                        Email: inquiry.email || '',
+                        'Issue Type': inquiry.issueType || 'General Inquiry',
+                        Message: inquiry.message || '',
+                        Address: inquiry.address || '',
+                        'Created At': inquiry.createdAt ? formatDate(inquiry.createdAt) : ''
+                      }))}
+                      filename={`inquiries-${startDate || 'all'}-to-${endDate || 'all'}.csv`}
+                      className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                    >
+                      <Download className="h-4 w-4" />
+                      Export CSV
+                    </CSVLink>
+                  )}
+                </div>
+                
                 {isLoading ? (
                   <div className="text-center py-12">
                     <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-orange-400 border-r-transparent"></div>
@@ -520,111 +658,154 @@ const AdminPage = () => {
                     {searchTerm ? "No inquiries match your search." : "No inquiries yet."}
                   </div>
                 ) : (
-                  <div className="divide-y divide-gray-200">
-                    {filteredInquiries.map((inquiry) => (
-                      <motion.div 
-                        key={inquiry.id} 
-                        className="py-4"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <div 
-                          className="flex justify-between items-center cursor-pointer hover:bg-gray-50 p-2 rounded"
-                          onClick={() => toggleExpand(inquiry.id)}
-                        >
-                          <div className="flex items-start gap-3">
-                            <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
-                              <span className="font-semibold text-orange-600">
-                                {inquiry.name.charAt(0).toUpperCase()}
-                              </span>
-                            </div>
-                            <div>
-                              <h3 className="font-medium text-gray-900">{inquiry.name}</h3>
-                              <div className="flex items-center gap-2 text-sm text-gray-600">
-                                <Phone className="h-3 w-3" />
-                                {inquiry.phone}
-                              </div>
-                              <div className="inline-block px-2 py-1 mt-1 bg-orange-100 text-orange-800 text-xs rounded-full">
-                                {inquiry.issueType || "General Inquiry"}
-                              </div>
-                            </div>
-                          </div>
-                          <div className="flex items-center">
-                            <span className="text-xs text-gray-500 mr-2">
-                              {inquiry.createdAt ? formatDate(inquiry.createdAt) : "Recent"}
-                            </span>
-                            <button
-                              className="p-1 hover:bg-gray-200 rounded transition-colors"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                toggleExpand(inquiry.id);
-                              }}
-                            >
-                              {expandedItem === inquiry.id ? (
-                                <ChevronUp className="h-5 w-5 text-gray-500" />
-                              ) : (
-                                <ChevronDown className="h-5 w-5 text-gray-500" />
-                              )}
-                            </button>
-                          </div>
-                        </div>
-                        
-                        {expandedItem === inquiry.id && (
-                          <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: "auto" }}
-                            transition={{ duration: 0.3 }}
-                            className="mt-2 pl-12 pr-2"
-                          >
-                            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
-                                {inquiry.email && (
-                                  <div className="flex items-center gap-2 text-sm">
-                                    <Mail className="h-4 w-4 text-gray-500" />
-                                    <span>{inquiry.email}</span>
-                                  </div>
-                                )}
-                                {inquiry.address && (
-                                  <div className="flex items-center gap-2 text-sm">
-                                    <Home className="h-4 w-4 text-gray-500" />
-                                    <span>{inquiry.address}</span>
-                                  </div>
-                                )}
-                                {inquiry.createdAt && (
-                                  <div className="flex items-center gap-2 text-sm">
-                                    <Calendar className="h-4 w-4 text-gray-500" />
-                                    <span>{formatDate(inquiry.createdAt)}</span>
-                                  </div>
-                                )}
-                              </div>
-                              
-                              {inquiry.message && (
-                                <div className="mb-4">
-                                  <h4 className="text-sm font-medium text-gray-700 mb-1">Message:</h4>
-                                  <p className="text-sm text-gray-600 bg-white p-3 rounded border border-gray-200">
-                                    {inquiry.message}
-                                  </p>
+                  <div className="overflow-auto">
+                    <table className="w-full border-collapse">
+                      <thead>
+                        <tr className="bg-gray-100">
+                          <th className="border border-gray-200 px-4 py-2 text-left">Name</th>
+                          <th className="border border-gray-200 px-4 py-2 text-left">Phone</th>
+                          <th className="border border-gray-200 px-4 py-2 text-left">Issue Type</th>
+                          <th className="border border-gray-200 px-4 py-2 text-left">Email</th>
+                          <th className="border border-gray-200 px-4 py-2 text-left">Date</th>
+                          <th className="border border-gray-200 px-4 py-2 text-center">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {sortByDate(filterByDateRange(filteredInquiries, startDate, endDate), sortOrder).map((inquiry) => (
+                          <tr key={inquiry.id} className="hover:bg-gray-50">
+                            <td className="border border-gray-200 px-4 py-2">
+                              <div className="flex items-center gap-2">
+                                <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                  <span className="font-semibold text-orange-600 text-xs">
+                                    {inquiry.name.charAt(0).toUpperCase()}
+                                  </span>
                                 </div>
-                              )}
-                              
-                              <div className="flex justify-end gap-2">
+                                <span>{inquiry.name}</span>
+                              </div>
+                            </td>
+                            <td className="border border-gray-200 px-4 py-2">{inquiry.phone}</td>
+                            <td className="border border-gray-200 px-4 py-2">
+                              <span className="inline-block px-2 py-1 bg-orange-100 text-orange-800 text-xs rounded-full">
+                                {inquiry.issueType || "General Inquiry"}
+                              </span>
+                            </td>
+                            <td className="border border-gray-200 px-4 py-2">{inquiry.email || "-"}</td>
+                            <td className="border border-gray-200 px-4 py-2 text-sm">
+                              {inquiry.createdAt ? formatDate(inquiry.createdAt) : "Recent"}
+                            </td>
+                            <td className="border border-gray-200 px-4 py-2">
+                              <div className="flex justify-center gap-2">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => toggleExpand(inquiry.id)}
+                                >
+                                  <Eye className="h-4 w-4" />
+                                </Button>
                                 <Button
                                   variant="outline"
                                   size="sm"
                                   className="text-red-600 border-red-200 hover:bg-red-50"
                                   onClick={() => deleteInquiryMutation.mutate(inquiry.id)}
                                 >
-                                  <Trash2 className="h-4 w-4 mr-1" />
-                                  Delete
+                                  <Trash2 className="h-4 w-4" />
                                 </Button>
                               </div>
-                            </div>
-                          </motion.div>
-                        )}
-                      </motion.div>
-                    ))}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
+                )}
+                
+                {expandedItem && (
+                  <Dialog open={expandedItem !== null} onOpenChange={(open) => !open && setExpandedItem(null)}>
+                    <DialogContent className="max-w-3xl">
+                      <DialogHeader>
+                        <DialogTitle>Inquiry Details</DialogTitle>
+                      </DialogHeader>
+                      
+                      {inquiries.find(i => i.id === expandedItem) && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
+                          <div>
+                            <h3 className="font-semibold mb-2">Contact Information</h3>
+                            <div className="space-y-2">
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium">Name:</span>
+                                <span>{inquiries.find(i => i.id === expandedItem).name}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium">Phone:</span>
+                                <span>{inquiries.find(i => i.id === expandedItem).phone}</span>
+                              </div>
+                              {inquiries.find(i => i.id === expandedItem).email && (
+                                <div className="flex items-center gap-2">
+                                  <span className="font-medium">Email:</span>
+                                  <span>{inquiries.find(i => i.id === expandedItem).email}</span>
+                                </div>
+                              )}
+                              {inquiries.find(i => i.id === expandedItem).address && (
+                                <div className="flex items-center gap-2">
+                                  <span className="font-medium">Address:</span>
+                                  <span>{inquiries.find(i => i.id === expandedItem).address}</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          
+                          <div>
+                            <h3 className="font-semibold mb-2">Inquiry Details</h3>
+                            <div className="space-y-2">
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium">Issue Type:</span>
+                                <span className="inline-block px-2 py-1 bg-orange-100 text-orange-800 text-xs rounded-full">
+                                  {inquiries.find(i => i.id === expandedItem).issueType || "General Inquiry"}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium">Submitted:</span>
+                                <span>
+                                  {inquiries.find(i => i.id === expandedItem).createdAt 
+                                    ? formatDate(inquiries.find(i => i.id === expandedItem).createdAt) 
+                                    : "Recent"}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {inquiries.find(i => i.id === expandedItem).message && (
+                            <div className="col-span-1 md:col-span-2">
+                              <h3 className="font-semibold mb-2">Message</h3>
+                              <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                {inquiries.find(i => i.id === expandedItem).message}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      
+                      <DialogFooter>
+                        <Button
+                          variant="destructive"
+                          onClick={() => {
+                            const id = expandedItem;
+                            setExpandedItem(null);
+                            deleteInquiryMutation.mutate(id);
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Delete
+                        </Button>
+                        <Button
+                          variant="outline"
+                          onClick={() => setExpandedItem(null)}
+                        >
+                          Close
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                 )}
               </TabsContent>
               
@@ -803,6 +984,30 @@ const AdminPage = () => {
               </TabsContent>
               
               <TabsContent value="contacts">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-xl font-semibold text-gray-800">Contact Submissions</h2>
+                  
+                  {!isLoadingContacts && !isContactError && filteredContacts.length > 0 && (
+                    <CSVLink 
+                      data={filterByDateRange(filteredContacts, startDate, endDate).map(contact => ({
+                        ID: contact.id,
+                        Name: contact.name,
+                        Phone: contact.phone,
+                        Email: contact.email || '',
+                        Service: contact.service || 'General',
+                        Message: contact.message || '',
+                        Consent: contact.consent ? 'Yes' : 'No',
+                        'Created At': contact.createdAt ? formatDate(contact.createdAt) : ''
+                      }))}
+                      filename={`contacts-${startDate || 'all'}-to-${endDate || 'all'}.csv`}
+                      className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                    >
+                      <Download className="h-4 w-4" />
+                      Export CSV
+                    </CSVLink>
+                  )}
+                </div>
+                
                 {isLoadingContacts ? (
                   <div className="text-center py-12">
                     <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-orange-400 border-r-transparent"></div>
@@ -814,108 +1019,158 @@ const AdminPage = () => {
                   </div>
                 ) : filteredContacts.length === 0 ? (
                   <div className="text-center py-12 text-gray-500">
-                    {searchTerm ? "No contact submissions match your search." : "No contact submissions yet."}
+                    {searchTerm ? "No contacts match your search." : "No contact form submissions yet."}
                   </div>
                 ) : (
-                  <div className="divide-y divide-gray-200">
-                    {filteredContacts.map((contact) => (
-                      <motion.div 
-                        key={contact.id} 
-                        className="py-4"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <div 
-                          className="flex justify-between items-center cursor-pointer hover:bg-gray-50 p-2 rounded"
-                          onClick={() => toggleExpand(`contact-${contact.id}`)}
-                        >
-                          <div className="flex items-start gap-3">
-                            <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                              <span className="font-semibold text-blue-600">
-                                {contact.name.charAt(0).toUpperCase()}
-                              </span>
-                            </div>
-                            <div>
-                              <h3 className="font-medium text-gray-900">{contact.name}</h3>
-                              <div className="flex items-center gap-2 text-sm text-gray-600">
-                                <Phone className="h-3 w-3" />
-                                {contact.phone}
-                              </div>
-                              <div className="inline-block px-2 py-1 mt-1 bg-blue-100 text-blue-800 text-xs rounded-full">
-                                {contact.service || "Contact Request"}
-                              </div>
-                            </div>
-                          </div>
-                          <div className="flex items-center">
-                            <span className="text-xs text-gray-500 mr-2">
-                              {contact.createdAt ? formatDate(contact.createdAt) : "Recent"}
-                            </span>
-                            <button
-                              className="p-1 hover:bg-gray-200 rounded transition-colors"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                toggleExpand(`contact-${contact.id}`);
-                              }}
-                            >
-                              {expandedItem === `contact-${contact.id}` ? (
-                                <ChevronUp className="h-5 w-5 text-gray-500" />
-                              ) : (
-                                <ChevronDown className="h-5 w-5 text-gray-500" />
-                              )}
-                            </button>
-                          </div>
-                        </div>
-                        
-                        {expandedItem === `contact-${contact.id}` && (
-                          <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: "auto" }}
-                            transition={{ duration: 0.3 }}
-                            className="mt-2 pl-12 pr-2"
-                          >
-                            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
-                                {contact.email && (
-                                  <div className="flex items-center gap-2 text-sm">
-                                    <Mail className="h-4 w-4 text-gray-500" />
-                                    <span>{contact.email}</span>
-                                  </div>
-                                )}
-                                {contact.createdAt && (
-                                  <div className="flex items-center gap-2 text-sm">
-                                    <Calendar className="h-4 w-4 text-gray-500" />
-                                    <span>{formatDate(contact.createdAt)}</span>
-                                  </div>
-                                )}
-                              </div>
-                              
-                              {contact.message && (
-                                <div className="mb-4">
-                                  <h4 className="text-sm font-medium text-gray-700 mb-1">Message:</h4>
-                                  <p className="text-sm text-gray-600 bg-white p-3 rounded border border-gray-200">
-                                    {contact.message}
-                                  </p>
+                  <div className="overflow-auto">
+                    <table className="w-full border-collapse">
+                      <thead>
+                        <tr className="bg-gray-100">
+                          <th className="border border-gray-200 px-4 py-2 text-left">Name</th>
+                          <th className="border border-gray-200 px-4 py-2 text-left">Email</th>
+                          <th className="border border-gray-200 px-4 py-2 text-left">Phone</th>
+                          <th className="border border-gray-200 px-4 py-2 text-left">Service</th>
+                          <th className="border border-gray-200 px-4 py-2 text-left">Date</th>
+                          <th className="border border-gray-200 px-4 py-2 text-center">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {sortByDate(filterByDateRange(filteredContacts, startDate, endDate), sortOrder).map((contact) => (
+                          <tr key={contact.id} className="hover:bg-gray-50">
+                            <td className="border border-gray-200 px-4 py-2">
+                              <div className="flex items-center gap-2">
+                                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                  <span className="font-semibold text-blue-600 text-xs">
+                                    {contact.name.charAt(0).toUpperCase()}
+                                  </span>
                                 </div>
-                              )}
-                              
-                              <div className="flex justify-end gap-2">
+                                <span>{contact.name}</span>
+                              </div>
+                            </td>
+                            <td className="border border-gray-200 px-4 py-2">{contact.email}</td>
+                            <td className="border border-gray-200 px-4 py-2">{contact.phone}</td>
+                            <td className="border border-gray-200 px-4 py-2">
+                              <span className="inline-block px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                                {contact.service || "Contact Request"}
+                              </span>
+                            </td>
+                            <td className="border border-gray-200 px-4 py-2 text-sm">
+                              {contact.createdAt ? formatDate(contact.createdAt) : "Recent"}
+                            </td>
+                            <td className="border border-gray-200 px-4 py-2">
+                              <div className="flex justify-center gap-2">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => toggleExpand(`contact-${contact.id}`)}
+                                >
+                                  <Eye className="h-4 w-4" />
+                                </Button>
                                 <Button
                                   variant="outline"
                                   size="sm"
                                   className="text-red-600 border-red-200 hover:bg-red-50"
                                   onClick={() => deleteContactMutation.mutate(contact.id)}
                                 >
-                                  <Trash2 className="h-4 w-4 mr-1" />
-                                  Delete
+                                  <Trash2 className="h-4 w-4" />
                                 </Button>
                               </div>
-                            </div>
-                          </motion.div>
-                        )}
-                      </motion.div>
-                    ))}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
+                )}
+                
+                {expandedItem && expandedItem.startsWith('contact-') && (
+                  <Dialog 
+                    open={expandedItem !== null && expandedItem.startsWith('contact-')} 
+                    onOpenChange={(open) => !open && setExpandedItem(null)}
+                  >
+                    <DialogContent className="max-w-3xl">
+                      <DialogHeader>
+                        <DialogTitle>Contact Submission Details</DialogTitle>
+                      </DialogHeader>
+                      
+                      {contactSubmissions.find(c => `contact-${c.id}` === expandedItem) && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
+                          <div>
+                            <h3 className="font-semibold mb-2">Contact Information</h3>
+                            <div className="space-y-2">
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium">Name:</span>
+                                <span>{contactSubmissions.find(c => `contact-${c.id}` === expandedItem).name}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium">Phone:</span>
+                                <span>{contactSubmissions.find(c => `contact-${c.id}` === expandedItem).phone}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium">Email:</span>
+                                <span>{contactSubmissions.find(c => `contact-${c.id}` === expandedItem).email}</span>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div>
+                            <h3 className="font-semibold mb-2">Submission Details</h3>
+                            <div className="space-y-2">
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium">Service:</span>
+                                <span className="inline-block px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                                  {contactSubmissions.find(c => `contact-${c.id}` === expandedItem).service || "Contact Request"}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium">Submitted:</span>
+                                <span>
+                                  {contactSubmissions.find(c => `contact-${c.id}` === expandedItem).createdAt 
+                                    ? formatDate(contactSubmissions.find(c => `contact-${c.id}` === expandedItem).createdAt) 
+                                    : "Recent"}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium">Consent:</span>
+                                <span>
+                                  {contactSubmissions.find(c => `contact-${c.id}` === expandedItem).consent ? "Yes" : "No"}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {contactSubmissions.find(c => `contact-${c.id}` === expandedItem).message && (
+                            <div className="col-span-1 md:col-span-2">
+                              <h3 className="font-semibold mb-2">Message</h3>
+                              <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                {contactSubmissions.find(c => `contact-${c.id}` === expandedItem).message}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      
+                      <DialogFooter>
+                        <Button
+                          variant="destructive"
+                          onClick={() => {
+                            const id = parseInt(expandedItem.replace('contact-', ''));
+                            setExpandedItem(null);
+                            deleteContactMutation.mutate(id);
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Delete
+                        </Button>
+                        <Button
+                          variant="outline"
+                          onClick={() => setExpandedItem(null)}
+                        >
+                          Close
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                 )}
               </TabsContent>
               
