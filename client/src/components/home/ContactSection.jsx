@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { CONTACT } from "@/lib/constants";
 import { useToast } from "@/hooks/use-toast";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 
 const ContactSection = () => {
   const { toast } = useToast();
@@ -40,9 +41,8 @@ const ContactSection = () => {
     try {
       setIsSubmitting(true);
       
-      // In a real implementation, this would send data to an API endpoint
-      // For now, we'll just simulate a successful submission
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Send data to the API endpoint for contact
+      await apiRequest("POST", "/api/contact", formData);
       
       toast({
         title: "Message Sent!",
@@ -50,6 +50,10 @@ const ContactSection = () => {
         variant: "default"
       });
       
+      // Invalidate any contacts cache to refresh admin panel
+      queryClient.invalidateQueries(["contacts"]);
+      
+      // Reset form data
       setFormData({
         name: "",
         email: "",
@@ -59,6 +63,7 @@ const ContactSection = () => {
         consent: false
       });
     } catch (error) {
+      console.error("Error submitting contact form:", error);
       toast({
         title: "Error",
         description: "There was a problem sending your message. Please try again.",

@@ -25,16 +25,6 @@ const HomePage = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Manually control the HomePageForm component
-  const HomePageFormComponent = () => {
-    const formComponent = <HomePageForm />;
-    // This makes sure the form only renders once the showForm state is true
-    if (showForm) {
-      return formComponent;
-    }
-    return null;
-  };
-
   return (
     <div>
       <Hero />
@@ -47,7 +37,11 @@ const HomePage = () => {
       <About />
       <ContactSection />
       <Cta />
-      <HomePageFormComponent />
+      {/* Pass showForm as isOpen prop and handle close event */}
+      <HomePageForm 
+        isOpen={showForm} 
+        onClose={() => setShowForm(false)} 
+      />
     </div>
   );
 };

@@ -7,8 +7,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 
-const HomePageForm = () => {
-  const [isOpen, setIsOpen] = useState(false);
+const HomePageForm = ({ isOpen: externalIsOpen, onClose }) => {
+  // Use external isOpen prop if provided, otherwise use internal state
+  const [isOpen, setIsOpen] = useState(externalIsOpen || false);
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({
     name: "",
@@ -19,6 +20,11 @@ const HomePageForm = () => {
     address: "",
   });
   const { toast } = useToast();
+  
+  // Sync with external isOpen prop when it changes
+  useEffect(() => {
+    setIsOpen(externalIsOpen);
+  }, [externalIsOpen]);
 
   // Issue types for building problems
   const issueTypes = [
@@ -80,6 +86,7 @@ const HomePageForm = () => {
       
       // Close form
       setIsOpen(false);
+      if (onClose) onClose();
     } catch (error) {
       toast({
         title: "Failed to submit",
@@ -97,7 +104,10 @@ const HomePageForm = () => {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
-          onClick={() => setIsOpen(false)}
+          onClick={() => {
+            setIsOpen(false);
+            if (onClose) onClose();
+          }}
         >
           <motion.div
             initial={{ scale: 0.9, y: 20 }}
@@ -110,7 +120,10 @@ const HomePageForm = () => {
             <div className="bg-gradient-to-r from-orange-500 to-orange-600 p-4 flex justify-between items-center">
               <h2 className="text-white font-bold text-lg">Building Doctor Consultation</h2>
               <button
-                onClick={() => setIsOpen(false)}
+                onClick={() => {
+                  setIsOpen(false);
+                  if (onClose) onClose();
+                }}
                 className="text-white hover:bg-white/20 rounded-full p-1"
               >
                 <X size={20} />
