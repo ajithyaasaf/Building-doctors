@@ -41,8 +41,8 @@ const ContactSection = () => {
     try {
       setIsSubmitting(true);
       
-      // Send data to the API endpoint for contact
-      await apiRequest("POST", "/api/contact", formData);
+      // Send data to the correct API endpoint for contact submissions
+      await apiRequest("POST", "/api/contacts", formData);
       
       toast({
         title: "Message Sent!",
@@ -62,6 +62,9 @@ const ContactSection = () => {
         message: "",
         consent: false
       });
+      
+      // Scroll to the top of the form
+      document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
     } catch (error) {
       console.error("Error submitting contact form:", error);
       toast({
