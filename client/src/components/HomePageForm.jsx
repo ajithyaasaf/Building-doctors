@@ -246,125 +246,268 @@ const HomePageForm = ({ isOpen: externalIsOpen, onClose }) => {
                     Contact Form
                   </TabsTrigger>
                 </TabsList>
-              </Tabs>
-              
-              <TabsContent value="inquiry">
-                {currentStep === 0 ? (
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
-                      <HelpCircle size={18} className="text-orange-500 mr-2" />
-                      What issue are you facing?
-                    </h3>
-                    
-                    <div className="grid grid-cols-2 gap-3 mb-4">
-                      {issueTypes.map((issue) => (
-                        <button
-                          key={issue}
-                          className="bg-orange-50 hover:bg-orange-100 text-orange-700 p-3 rounded-lg text-sm font-medium transition-colors text-left border border-orange-200 hover:border-orange-300"
-                          onClick={() => handleIssueSelect(issue)}
-                        >
-                          {issue}
-                        </button>
-                      ))}
-                    </div>
-                    
-                    {/* Skip to contact form button */}
-                    <button
-                      className="w-full text-sm text-gray-500 hover:text-orange-600 mt-2"
-                      onClick={() => setActiveTab("contact")}
-                    >
-                      Skip to detailed contact form
-                    </button>
-                  </div>
-                ) : (
-                  <form onSubmit={handleInquirySubmit}>
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                      {inquiryData.issueType ? (
-                        <div className="flex items-center justify-between">
-                          <span>Let us fix your {inquiryData.issueType}</span>
+                
+                <TabsContent value="inquiry">
+                  {currentStep === 0 ? (
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                        <HelpCircle size={18} className="text-orange-500 mr-2" />
+                        What issue are you facing?
+                      </h3>
+                      
+                      <div className="grid grid-cols-2 gap-3 mb-4">
+                        {issueTypes.map((issue) => (
                           <button
-                            type="button"
-                            className="text-xs text-orange-600 hover:text-orange-700"
-                            onClick={() => setCurrentStep(0)}
+                            key={issue}
+                            className="bg-orange-50 hover:bg-orange-100 text-orange-700 p-3 rounded-lg text-sm font-medium transition-colors text-left border border-orange-200 hover:border-orange-300"
+                            onClick={() => handleIssueSelect(issue)}
                           >
-                            Change issue
+                            {issue}
                           </button>
+                        ))}
+                      </div>
+                      
+                      {/* Skip to contact form button */}
+                      <button
+                        className="w-full text-sm text-gray-500 hover:text-orange-600 mt-2"
+                        onClick={() => setActiveTab("contact")}
+                      >
+                        Skip to detailed contact form
+                      </button>
+                    </div>
+                  ) : (
+                    <form onSubmit={handleInquirySubmit}>
+                      <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                        {inquiryData.issueType ? (
+                          <div className="flex items-center justify-between">
+                            <span>Let us fix your {inquiryData.issueType}</span>
+                            <button
+                              type="button"
+                              className="text-xs text-orange-600 hover:text-orange-700"
+                              onClick={() => setCurrentStep(0)}
+                            >
+                              Change issue
+                            </button>
+                          </div>
+                        ) : (
+                          "Contact Information"
+                        )}
+                      </h3>
+                      
+                      <div className="space-y-4">
+                        <div className="relative">
+                          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            <User className="h-5 w-5 text-orange-500" />
+                          </div>
+                          <Input
+                            type="text"
+                            name="name"
+                            placeholder="Your Name *"
+                            className="pl-10"
+                            value={inquiryData.name}
+                            onChange={handleInquiryChange}
+                            required
+                          />
                         </div>
-                      ) : (
-                        "Contact Information"
-                      )}
+                        
+                        <div className="relative">
+                          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            <Phone className="h-5 w-5 text-orange-500" />
+                          </div>
+                          <Input
+                            type="tel"
+                            name="phone"
+                            placeholder="Phone Number *"
+                            className="pl-10"
+                            value={inquiryData.phone}
+                            onChange={handleInquiryChange}
+                            required
+                          />
+                        </div>
+                        
+                        <div className="relative">
+                          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            <Mail className="h-5 w-5 text-orange-500" />
+                          </div>
+                          <Input
+                            type="email"
+                            name="email"
+                            placeholder="Email (Optional)"
+                            className="pl-10"
+                            value={inquiryData.email}
+                            onChange={handleInquiryChange}
+                          />
+                        </div>
+                        
+                        <div className="relative">
+                          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            <Home className="h-5 w-5 text-orange-500" />
+                          </div>
+                          <Input
+                            type="text"
+                            name="address"
+                            placeholder="Property Address (Optional)"
+                            className="pl-10"
+                            value={inquiryData.address}
+                            onChange={handleInquiryChange}
+                          />
+                        </div>
+                        
+                        <div className="relative">
+                          <div className="absolute top-3 left-3 pointer-events-none">
+                            <MessageSquare className="h-5 w-5 text-orange-500" />
+                          </div>
+                          <Textarea
+                            name="message"
+                            placeholder="Describe your issue in detail (Optional)"
+                            className="pl-10 pt-2 min-h-[100px]"
+                            value={inquiryData.message}
+                            onChange={handleInquiryChange}
+                          />
+                        </div>
+                      </div>
+                      
+                      <div className="mt-6">
+                        <Button
+                          type="submit"
+                          className="w-full bg-orange-600 hover:bg-orange-700 text-white"
+                          disabled={isSubmitting}
+                        >
+                          {isSubmitting ? 'Submitting...' : 'Request Free Consultation'}
+                        </Button>
+                        <p className="text-xs text-gray-500 mt-2 text-center">
+                          We'll contact you soon to discuss your building issues and provide expert solutions.
+                        </p>
+                      </div>
+                    </form>
+                  )}
+                </TabsContent>
+                
+                <TabsContent value="contact">
+                  <form onSubmit={handleContactSubmit}>
+                    <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                      <FilePlus className="h-5 w-5 text-orange-500 mr-2" />
+                      Send Us A Message
                     </h3>
                     
                     <div className="space-y-4">
                       <div className="relative">
-                        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                          <User className="h-5 w-5 text-orange-500" />
+                        <Label htmlFor="contact-name" className="text-sm font-medium mb-1 block">
+                          Full Name <span className="text-red-500">*</span>
+                        </Label>
+                        <div className="relative">
+                          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            <User className="h-5 w-5 text-orange-500" />
+                          </div>
+                          <Input
+                            id="contact-name"
+                            type="text"
+                            name="name"
+                            placeholder="Your name"
+                            className="pl-10"
+                            value={contactData.name}
+                            onChange={handleContactChange}
+                            required
+                          />
                         </div>
-                        <Input
-                          type="text"
-                          name="name"
-                          placeholder="Your Name *"
-                          className="pl-10"
-                          value={inquiryData.name}
-                          onChange={handleInquiryChange}
+                      </div>
+                      
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="relative">
+                          <Label htmlFor="contact-email" className="text-sm font-medium mb-1 block">
+                            Email Address <span className="text-red-500">*</span>
+                          </Label>
+                          <div className="relative">
+                            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                              <Mail className="h-5 w-5 text-orange-500" />
+                            </div>
+                            <Input
+                              id="contact-email"
+                              type="email"
+                              name="email"
+                              placeholder="Your email"
+                              className="pl-10"
+                              value={contactData.email}
+                              onChange={handleContactChange}
+                              required
+                            />
+                          </div>
+                        </div>
+                        
+                        <div className="relative">
+                          <Label htmlFor="contact-phone" className="text-sm font-medium mb-1 block">
+                            Phone Number <span className="text-red-500">*</span>
+                          </Label>
+                          <div className="relative">
+                            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                              <Phone className="h-5 w-5 text-orange-500" />
+                            </div>
+                            <Input
+                              id="contact-phone"
+                              type="tel"
+                              name="phone"
+                              placeholder="Your phone number"
+                              className="pl-10"
+                              value={contactData.phone}
+                              onChange={handleContactChange}
+                              required
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="relative">
+                        <Label htmlFor="contact-service" className="text-sm font-medium mb-1 block">
+                          Service Required <span className="text-red-500">*</span>
+                        </Label>
+                        <Select 
+                          value={contactData.service} 
+                          onValueChange={handleContactServiceChange}
                           required
-                        />
+                        >
+                          <SelectTrigger id="contact-service" className="w-full">
+                            <SelectValue placeholder="Select a service" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {serviceTypes.map((service) => (
+                              <SelectItem key={service} value={service.toLowerCase().replace(/\s+/g, '-')}>
+                                {service}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
                       
                       <div className="relative">
-                        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                          <Phone className="h-5 w-5 text-orange-500" />
+                        <Label htmlFor="contact-message" className="text-sm font-medium mb-1 block">
+                          Message <span className="text-red-500">*</span>
+                        </Label>
+                        <div className="relative">
+                          <div className="absolute top-3 left-3 pointer-events-none">
+                            <MessageSquare className="h-5 w-5 text-orange-500" />
+                          </div>
+                          <Textarea
+                            id="contact-message"
+                            name="message"
+                            placeholder="Describe your building problem or requirements"
+                            className="pl-10 pt-2 min-h-[120px]"
+                            value={contactData.message}
+                            onChange={handleContactChange}
+                            required
+                          />
                         </div>
-                        <Input
-                          type="tel"
-                          name="phone"
-                          placeholder="Phone Number *"
-                          className="pl-10"
-                          value={inquiryData.phone}
-                          onChange={handleInquiryChange}
-                          required
-                        />
                       </div>
                       
-                      <div className="relative">
-                        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                          <Mail className="h-5 w-5 text-orange-500" />
-                        </div>
-                        <Input
-                          type="email"
-                          name="email"
-                          placeholder="Email (Optional)"
-                          className="pl-10"
-                          value={inquiryData.email}
-                          onChange={handleInquiryChange}
+                      <div className="flex items-start space-x-2">
+                        <Checkbox 
+                          id="consent" 
+                          checked={contactData.consent}
+                          onCheckedChange={handleContactCheckboxChange}
+                          className="mt-1"
                         />
-                      </div>
-                      
-                      <div className="relative">
-                        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                          <Home className="h-5 w-5 text-orange-500" />
-                        </div>
-                        <Input
-                          type="text"
-                          name="address"
-                          placeholder="Property Address (Optional)"
-                          className="pl-10"
-                          value={inquiryData.address}
-                          onChange={handleInquiryChange}
-                        />
-                      </div>
-                      
-                      <div className="relative">
-                        <div className="absolute top-3 left-3 pointer-events-none">
-                          <MessageSquare className="h-5 w-5 text-orange-500" />
-                        </div>
-                        <Textarea
-                          name="message"
-                          placeholder="Describe your issue in detail (Optional)"
-                          className="pl-10 pt-2 min-h-[100px]"
-                          value={inquiryData.message}
-                          onChange={handleInquiryChange}
-                        />
+                        <Label htmlFor="consent" className="text-sm text-gray-600">
+                          I agree to the processing of my personal data to receive communications about products and services.
+                        </Label>
                       </div>
                     </div>
                     
@@ -374,158 +517,15 @@ const HomePageForm = ({ isOpen: externalIsOpen, onClose }) => {
                         className="w-full bg-orange-600 hover:bg-orange-700 text-white"
                         disabled={isSubmitting}
                       >
-                        {isSubmitting ? 'Submitting...' : 'Request Free Consultation'}
+                        {isSubmitting ? 'Sending...' : 'Send Message'}
                       </Button>
                       <p className="text-xs text-gray-500 mt-2 text-center">
-                        We'll contact you soon to discuss your building issues and provide expert solutions.
+                        Our team will get back to you as soon as possible.
                       </p>
                     </div>
                   </form>
-                )}
-              </TabsContent>
-              
-              <TabsContent value="contact">
-                <form onSubmit={handleContactSubmit}>
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                    <FilePlus className="h-5 w-5 text-orange-500 mr-2" />
-                    Send Us A Message
-                  </h3>
-                  
-                  <div className="space-y-4">
-                    <div className="relative">
-                      <Label htmlFor="contact-name" className="text-sm font-medium mb-1 block">
-                        Full Name <span className="text-red-500">*</span>
-                      </Label>
-                      <div className="relative">
-                        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                          <User className="h-5 w-5 text-orange-500" />
-                        </div>
-                        <Input
-                          id="contact-name"
-                          type="text"
-                          name="name"
-                          placeholder="Your name"
-                          className="pl-10"
-                          value={contactData.name}
-                          onChange={handleContactChange}
-                          required
-                        />
-                      </div>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="relative">
-                        <Label htmlFor="contact-email" className="text-sm font-medium mb-1 block">
-                          Email Address <span className="text-red-500">*</span>
-                        </Label>
-                        <div className="relative">
-                          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                            <Mail className="h-5 w-5 text-orange-500" />
-                          </div>
-                          <Input
-                            id="contact-email"
-                            type="email"
-                            name="email"
-                            placeholder="Your email"
-                            className="pl-10"
-                            value={contactData.email}
-                            onChange={handleContactChange}
-                            required
-                          />
-                        </div>
-                      </div>
-                      
-                      <div className="relative">
-                        <Label htmlFor="contact-phone" className="text-sm font-medium mb-1 block">
-                          Phone Number <span className="text-red-500">*</span>
-                        </Label>
-                        <div className="relative">
-                          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                            <Phone className="h-5 w-5 text-orange-500" />
-                          </div>
-                          <Input
-                            id="contact-phone"
-                            type="tel"
-                            name="phone"
-                            placeholder="Your phone number"
-                            className="pl-10"
-                            value={contactData.phone}
-                            onChange={handleContactChange}
-                            required
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="relative">
-                      <Label htmlFor="contact-service" className="text-sm font-medium mb-1 block">
-                        Service Required <span className="text-red-500">*</span>
-                      </Label>
-                      <Select 
-                        value={contactData.service} 
-                        onValueChange={handleContactServiceChange}
-                        required
-                      >
-                        <SelectTrigger id="contact-service" className="w-full">
-                          <SelectValue placeholder="Select a service" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {serviceTypes.map((service) => (
-                            <SelectItem key={service} value={service.toLowerCase().replace(/\s+/g, '-')}>
-                              {service}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    
-                    <div className="relative">
-                      <Label htmlFor="contact-message" className="text-sm font-medium mb-1 block">
-                        Message <span className="text-red-500">*</span>
-                      </Label>
-                      <div className="relative">
-                        <div className="absolute top-3 left-3 pointer-events-none">
-                          <MessageSquare className="h-5 w-5 text-orange-500" />
-                        </div>
-                        <Textarea
-                          id="contact-message"
-                          name="message"
-                          placeholder="Describe your building problem or requirements"
-                          className="pl-10 pt-2 min-h-[120px]"
-                          value={contactData.message}
-                          onChange={handleContactChange}
-                          required
-                        />
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start space-x-2">
-                      <Checkbox 
-                        id="consent" 
-                        checked={contactData.consent}
-                        onCheckedChange={handleContactCheckboxChange}
-                        className="mt-1"
-                      />
-                      <Label htmlFor="consent" className="text-sm text-gray-600">
-                        I agree to the processing of my personal data to receive communications about products and services.
-                      </Label>
-                    </div>
-                  </div>
-                  
-                  <div className="mt-6">
-                    <Button
-                      type="submit"
-                      className="w-full bg-orange-600 hover:bg-orange-700 text-white"
-                      disabled={isSubmitting}
-                    >
-                      {isSubmitting ? 'Sending...' : 'Send Message'}
-                    </Button>
-                    <p className="text-xs text-gray-500 mt-2 text-center">
-                      Our team will get back to you as soon as possible.
-                    </p>
-                  </div>
-                </form>
-              </TabsContent>
+                </TabsContent>
+              </Tabs>
             </div>
           </motion.div>
         </motion.div>
