@@ -14,6 +14,7 @@ import Footer from "./components/layout/Footer";
 import WhatsappButton from "./components/WhatsappButton";
 import HomePageForm from "./components/HomePageForm";
 import ExitIntentPopup from "./components/ExitIntentPopup";
+import ChatBot from "./components/chat/ChatBot";
 import { pageTransition } from "./utils/animations";
 
 function App() {
@@ -90,6 +91,7 @@ function App() {
       <WhatsappButton />
       {showPopupForm && <HomePageForm />}
       <ExitIntentPopup />
+      <ChatBot />
       <Toaster />
     </div>
   );
