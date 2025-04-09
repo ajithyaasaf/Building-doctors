@@ -92,8 +92,8 @@ const Header = () => {
             aria-label="Toggle menu"
           >
             {isOpen ? 
-              <X size={24} className="text-white group-hover:text-black transition-colors" /> : 
-              <Menu size={24} className="text-white group-hover:text-black transition-colors" />
+              <X size={24} className="text-black group-hover:text-orange-600 transition-colors" /> : 
+              <Menu size={24} className="text-black group-hover:text-orange-600 transition-colors" />
             }
           </motion.button>
         </nav>

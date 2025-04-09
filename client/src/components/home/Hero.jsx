@@ -66,9 +66,9 @@ const Hero = () => {
   return (
     <section
       id="home"
-      className="pt-24 mt-10 overflow-hidden bg-gradient-to-br from-slate-50 to-gray-100 min-h-[85vh] flex items-center"
+      className="pt-16 overflow-hidden bg-gradient-to-br from-slate-50 to-gray-100 min-h-[85vh] flex items-center"
     >
-      <div className="container mx-auto px-4 pt-8 pb-16 md:pt-16 md:pb-24 relative z-20">
+      <div className="container mx-auto px-4 pt-4 pb-16 md:pb-24 relative z-20">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           {/* Left side building visual */}
           <div className="lg:col-span-6 relative">

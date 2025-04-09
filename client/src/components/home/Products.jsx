@@ -50,9 +50,9 @@ const Products = () => {
         <div className="flex justify-between items-center">
           <span className="font-medium text-primary">₹{product.price.toLocaleString('en-IN')}</span>
           <Link href={`/products/${product.id}`}>
-            <a className="bg-primary hover:bg-primary/90 text-white px-3 py-1 rounded text-sm transition">
+            <span className="bg-primary hover:bg-primary/90 text-white px-3 py-1 rounded text-sm transition cursor-pointer">
               View Details
-            </a>
+            </span>
           </Link>
         </div>
       </div>
@@ -116,9 +116,9 @@ const Products = () => {
         {featuredProducts.length > 0 && (
           <div className="mt-12 text-center">
             <Link href="/products">
-              <a className="inline-flex items-center bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-md font-medium transition">
+              <span className="inline-flex items-center bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-md font-medium transition cursor-pointer">
                 <i className="fas fa-th-large mr-2"></i> Browse All Products
-              </a>
+              </span>
             </Link>
           </div>
         )}
