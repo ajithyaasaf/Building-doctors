@@ -44,10 +44,8 @@ const Benefits = () => {
                 ))}
               </div>
               
-              <Link href="/about">
-                <span className="inline-block bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-md font-medium transition cursor-pointer">
-                  About Our Company
-                </span>
+              <Link to="/about" className="inline-block bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-md font-medium transition cursor-pointer">
+                About Our Company
               </Link>
             </div>
             <div className="relative h-96 md:h-auto">
