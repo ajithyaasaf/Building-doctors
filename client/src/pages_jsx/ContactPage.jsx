@@ -98,8 +98,8 @@ const ContactPage = () => {
               
               <div className="space-y-6">
                 <div className="flex items-start">
-                  <div className="w-10 h-10 bg-primary bg-opacity-10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
-                    <i className="fas fa-map-marker-alt text-primary"></i>
+                  <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                    <i className="fas fa-map-marker-alt text-white"></i>
                   </div>
                   <div>
                     <h4 className="font-medium mb-1">Address</h4>
@@ -108,8 +108,8 @@ const ContactPage = () => {
                 </div>
                 
                 <div className="flex items-start">
-                  <div className="w-10 h-10 bg-primary bg-opacity-10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
-                    <i className="fas fa-phone-alt text-primary"></i>
+                  <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                    <i className="fas fa-phone-alt text-white"></i>
                   </div>
                   <div>
                     <h4 className="font-medium mb-1">Phone</h4>
@@ -124,8 +124,8 @@ const ContactPage = () => {
                 </div>
                 
                 <div className="flex items-start">
-                  <div className="w-10 h-10 bg-primary bg-opacity-10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
-                    <i className="fas fa-envelope text-primary"></i>
+                  <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                    <i className="fas fa-envelope text-white"></i>
                   </div>
                   <div>
                     <h4 className="font-medium mb-1">Email</h4>
@@ -138,8 +138,8 @@ const ContactPage = () => {
                 </div>
                 
                 <div className="flex items-start">
-                  <div className="w-10 h-10 bg-primary bg-opacity-10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
-                    <i className="fas fa-clock text-primary"></i>
+                  <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                    <i className="fas fa-clock text-white"></i>
                   </div>
                   <div>
                     <h4 className="font-medium mb-1">Working Hours</h4>
@@ -154,7 +154,7 @@ const ContactPage = () => {
                 <div className="flex space-x-4">
                   <a 
                     href={`https://www.facebook.com/${CONTACT.social.facebook}`} 
-                    className="w-10 h-10 bg-primary bg-opacity-10 rounded-full flex items-center justify-center text-primary hover:bg-primary hover:text-white transition"
+                    className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white hover:bg-primary/90 transition"
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Facebook"
@@ -163,7 +163,7 @@ const ContactPage = () => {
                   </a>
                   <a 
                     href={`https://twitter.com/${CONTACT.social.twitter}`} 
-                    className="w-10 h-10 bg-primary bg-opacity-10 rounded-full flex items-center justify-center text-primary hover:bg-primary hover:text-white transition"
+                    className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white hover:bg-primary/90 transition"
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Twitter"
@@ -172,7 +172,7 @@ const ContactPage = () => {
                   </a>
                   <a 
                     href={`https://www.instagram.com/${CONTACT.social.instagram}`} 
-                    className="w-10 h-10 bg-primary bg-opacity-10 rounded-full flex items-center justify-center text-primary hover:bg-primary hover:text-white transition"
+                    className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white hover:bg-primary/90 transition"
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Instagram"
