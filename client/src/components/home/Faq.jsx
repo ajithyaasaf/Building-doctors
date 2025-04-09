@@ -35,7 +35,7 @@ const Faq = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <div className="inline-block px-4 py-1 bg-primary bg-opacity-10 rounded-full mb-3">
-            <p className="text-xs font-semibold text-primary uppercase tracking-wider">FAQs</p>
+            <p className="text-xs font-semibold text-white uppercase tracking-wider">FAQs</p>
           </div>
           <h2 className="font-montserrat font-bold text-3xl md:text-4xl mb-4">Common <span className="text-primary">Building Problems</span></h2>
           <p className="text-gray-600 max-w-2xl mx-auto">Answers to frequently asked questions about building issues and our solutions.</p>

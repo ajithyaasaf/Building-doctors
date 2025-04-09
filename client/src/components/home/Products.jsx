@@ -62,7 +62,7 @@ const Products = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <div className="inline-block px-4 py-1 bg-primary bg-opacity-10 rounded-full mb-3">
-            <p className="text-xs font-semibold text-primary uppercase tracking-wider">Our Products</p>
+            <p className="text-xs font-semibold text-white uppercase tracking-wider">Our Products</p>
           </div>
           <h2 className="font-montserrat font-bold text-3xl md:text-4xl mb-4">Premium <span className="text-primary">Construction Chemicals</span></h2>
           <p className="text-gray-600 max-w-2xl mx-auto">Browse our extensive catalog of over 100 specialized building and repair products.</p>

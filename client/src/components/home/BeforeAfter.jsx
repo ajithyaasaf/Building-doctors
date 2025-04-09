@@ -103,7 +103,7 @@ const BeforeAfter = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <div className="inline-block px-4 py-1 bg-primary bg-opacity-10 rounded-full mb-3">
-            <p className="text-xs font-semibold text-primary uppercase tracking-wider">Our Results</p>
+            <p className="text-xs font-semibold text-white uppercase tracking-wider">Our Results</p>
           </div>
           <h2 className="font-montserrat font-bold text-3xl md:text-4xl mb-4">See The <span className="text-primary">Transformation</span></h2>
           <p className="text-gray-600 max-w-2xl mx-auto">Real projects showcasing the dramatic improvements our solutions can achieve for your property.</p>

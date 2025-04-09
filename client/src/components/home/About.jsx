@@ -8,7 +8,7 @@ const About = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div>
             <div className="inline-block px-4 py-1 bg-primary bg-opacity-10 rounded-full mb-3">
-              <p className="text-xs font-semibold text-primary uppercase tracking-wider">About Us</p>
+              <p className="text-xs font-semibold text-white uppercase tracking-wider">About Us</p>
             </div>
             <h2 className="font-montserrat font-bold text-3xl md:text-4xl mb-6">Madurai's Trusted <span className="text-primary">Building Repair Experts</span></h2>
             <p className="text-gray-600 mb-4">OM Vinayaga Associates is an authorized franchise of Building Doctor, bringing professional building repair and maintenance solutions to Madurai and surrounding areas.</p>
