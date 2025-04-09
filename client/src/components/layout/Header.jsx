@@ -65,8 +65,7 @@ const Header = () => {
           >
             {navLinks.map((link, index) => (
               <Link key={link.path} to={link.path}>
-                <motion.div
-                  variants={fadeInRight(0.1 * (index + 1), 0.5)}
+                <span
                   className={cn(
                     'flex items-center gap-1.5 text-sm font-medium transition-all cursor-pointer hover:text-orange-600 px-3 py-2 rounded-md group',
                     location === link.path
@@ -76,7 +75,7 @@ const Header = () => {
                 >
                   {link.icon}
                   <span>{link.name}</span>
-                </motion.div>
+                </span>
               </Link>
             ))}
             

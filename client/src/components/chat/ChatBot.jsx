@@ -340,7 +340,7 @@ const ChatBot = () => {
       {/* Chat toggle button */}
       <button
         onClick={toggleChat}
-        className="fixed bottom-20 right-6 xs:bottom-6 xs:right-20 sm:right-20 md:right-20 lg:right-20 bg-orange-600 text-white p-4 rounded-full shadow-lg hover:bg-orange-700 transition-all z-50"
+        className="fixed bottom-20 right-6 xs:bottom-6 xs:right-20 sm:right-20 md:right-20 lg:right-20 bg-orange-600 text-white p-4 w-14 h-14 rounded-full shadow-lg hover:bg-orange-700 transition-all z-50 flex items-center justify-center"
         aria-label="Toggle chat"
       >
         {isOpen ? <X size={24} /> : <MessageCircle size={24} />}
