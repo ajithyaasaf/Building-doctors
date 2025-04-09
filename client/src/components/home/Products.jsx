@@ -49,10 +49,8 @@ const Products = () => {
         <div className="text-sm text-gray-600 mb-3">{product.description}</div>
         <div className="flex justify-between items-center">
           <span className="font-medium text-primary">₹{product.price.toLocaleString('en-IN')}</span>
-          <Link href={`/products/${product.id}`}>
-            <span className="bg-primary hover:bg-primary/90 text-white px-3 py-1 rounded text-sm transition cursor-pointer">
-              View Details
-            </span>
+          <Link to={`/products/${product.id}`} className="bg-primary hover:bg-primary/90 text-white px-3 py-1 rounded text-sm transition cursor-pointer">
+            View Details
           </Link>
         </div>
       </div>
@@ -115,10 +113,8 @@ const Products = () => {
         {/* Browse All Products Button */}
         {featuredProducts.length > 0 && (
           <div className="mt-12 text-center">
-            <Link href="/products">
-              <span className="inline-flex items-center bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-md font-medium transition cursor-pointer">
-                <i className="fas fa-th-large mr-2"></i> Browse All Products
-              </span>
+            <Link to="/products" className="inline-flex items-center bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-md font-medium transition cursor-pointer">
+              <i className="fas fa-th-large mr-2"></i> Browse All Products
             </Link>
           </div>
         )}

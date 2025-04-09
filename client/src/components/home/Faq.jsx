@@ -57,10 +57,8 @@ const Faq = () => {
         
         <div className="mt-12 text-center">
           <p className="text-gray-600 mb-4">Still have questions? We're here to help.</p>
-          <Link href="/contact">
-            <a className="inline-block bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-md font-medium transition">
-              Contact Our Experts
-            </a>
+          <Link to="/contact" className="inline-block bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-md font-medium transition">
+            Contact Our Experts
           </Link>
         </div>
       </div>
