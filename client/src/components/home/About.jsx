@@ -36,15 +36,11 @@ const About = () => {
             </div>
             
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link href="/contact">
-                <a className="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-md font-medium transition text-center">
-                  Contact Us
-                </a>
+              <Link to="/contact" className="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-md font-medium transition text-center">
+                Contact Us
               </Link>
-              <Link href="/services">
-                <a className="bg-white hover:bg-gray-100 text-primary px-6 py-3 rounded-md font-medium transition border border-primary text-center">
-                  Our Services
-                </a>
+              <Link to="/services" className="bg-white hover:bg-gray-100 text-primary px-6 py-3 rounded-md font-medium transition border border-primary text-center">
+                Our Services
               </Link>
             </div>
           </div>
