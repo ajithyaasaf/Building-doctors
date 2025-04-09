@@ -340,7 +340,7 @@ const ChatBot = () => {
       {/* Chat toggle button */}
       <button
         onClick={toggleChat}
-        className="fixed bottom-6 right-6 sm:right-24 bg-orange-600 text-white p-4 rounded-full shadow-lg hover:bg-orange-700 transition-all z-50"
+        className="fixed bottom-20 right-6 xs:bottom-6 xs:right-20 sm:right-20 md:right-20 lg:right-20 bg-orange-600 text-white p-4 rounded-full shadow-lg hover:bg-orange-700 transition-all z-50"
         aria-label="Toggle chat"
       >
         {isOpen ? <X size={24} /> : <MessageCircle size={24} />}
@@ -354,7 +354,7 @@ const ChatBot = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.9 }}
             transition={{ duration: 0.2 }}
-            className="fixed bottom-20 right-6 sm:right-24 w-80 sm:w-96 h-[500px] bg-white rounded-lg shadow-xl overflow-hidden z-50 flex flex-col"
+            className="fixed bottom-[80px] right-6 xs:bottom-28 xs:right-20 sm:bottom-28 sm:right-20 md:right-20 lg:right-20 w-80 sm:w-96 h-[500px] bg-white rounded-lg shadow-xl overflow-hidden z-50 flex flex-col"
           >
             {/* Chat header */}
             <div className="bg-orange-600 text-white px-4 py-3 flex justify-between items-center">

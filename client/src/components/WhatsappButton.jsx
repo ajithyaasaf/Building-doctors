@@ -28,7 +28,7 @@ const WhatsappButton = () => {
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.5 }}
           transition={{ duration: 0.3 }}
-          className="fixed bottom-6 right-6 z-50"
+          className="fixed bottom-6 right-6 sm:right-6 md:right-6 lg:right-6 z-50"
         >
           <motion.div
             className="absolute inset-0 bg-green-500 rounded-full"
