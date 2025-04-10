@@ -3,8 +3,8 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { z } from "zod";
 import { 
-  contactSchema, productSchema, inquirySchema, serviceSchema, testimonialSchema, faqSchema,
-  type Product, type Contact, type Inquiry, type Service, type Testimonial, type Faq
+  contactSchema, productSchema, inquirySchema, serviceSchema, testimonialSchema, faqSchema, intentSchema,
+  type Product, type Contact, type Inquiry, type Service, type Testimonial, type Faq, type Intent
 } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -711,6 +711,81 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({
         success: false,
         message: "Failed to delete FAQ"
+      });
+    }
+  });
+
+  // ======================
+  // INTENT ENDPOINTS (Exit Intent Popup)
+  // ======================
+  
+  // Get all intents
+  app.get("/api/intents", async (req, res) => {
+    try {
+      const intents = await storage.getIntents();
+      res.status(200).json(intents);
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "Failed to fetch intent form submissions"
+      });
+    }
+  });
+  
+  // Intent form submission endpoint
+  app.post("/api/intent", async (req, res) => {
+    try {
+      const parsedData = intentSchema.parse(req.body);
+      
+      // Create intent in Firebase
+      const newIntent = await storage.createIntent(parsedData);
+      
+      res.status(200).json({
+        success: true,
+        message: "Intent form submitted successfully",
+        intent: newIntent
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        res.status(400).json({
+          success: false,
+          message: "Invalid form data",
+          errors: error.errors
+        });
+      } else {
+        console.error('Intent form creation error:', error);
+        res.status(500).json({
+          success: false,
+          message: "Failed to process intent form"
+        });
+      }
+    }
+  });
+  
+  // Delete an intent form submission
+  app.delete("/api/intents/:id", async (req, res) => {
+    try {
+      const intentId = parseInt(req.params.id);
+      
+      // Delete intent from Firebase
+      const success = await storage.deleteIntent(intentId);
+      
+      if (!success) {
+        return res.status(404).json({
+          success: false,
+          message: "Intent form submission not found"
+        });
+      }
+      
+      res.status(200).json({
+        success: true,
+        message: "Intent form submission deleted successfully"
+      });
+    } catch (error) {
+      console.error('Intent deletion error:', error);
+      res.status(500).json({
+        success: false,
+        message: "Failed to delete intent form submission"
       });
     }
   });

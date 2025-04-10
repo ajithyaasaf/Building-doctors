@@ -80,7 +80,7 @@ const ExitIntentPopup = () => {
     
     try {
       setIsSubmitting(true);
-      await apiRequest("POST", "/api/contacts", formData);
+      await apiRequest("POST", "/api/intent", formData);
       
       // Reset form and show success
       setFormData({
@@ -96,8 +96,8 @@ const ExitIntentPopup = () => {
         description: "Our team will contact you shortly.",
       });
       
-      // Invalidate contacts cache to refresh admin panel
-      queryClient.invalidateQueries(["contacts"]);
+      // Invalidate intents cache to refresh admin panel
+      queryClient.invalidateQueries(["intents"]);
       
       // Close popup
       setIsOpen(false);
