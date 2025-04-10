@@ -104,14 +104,14 @@ const Hero = () => {
                             currentProblem === 0
                               ? "15%"
                               : currentProblem === 1
-                              ? "50%"
-                              : "80%",
+                                ? "50%"
+                                : "80%",
                           left:
                             currentProblem === 0
                               ? "60%"
                               : currentProblem === 1
-                              ? "30%"
-                              : "70%",
+                                ? "30%"
+                                : "70%",
                         }}
                       >
                         <div className="bg-red-500 w-8 h-8 rounded-full flex items-center justify-center text-white animate-pulse">
@@ -258,7 +258,7 @@ const Hero = () => {
               ].map((feature, i) => (
                 <div key={i} className="flex items-center">
                   <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center mr-3 group">
-                    <Check className="h-4 w-4 text-white group-hover:text-black transition-colors" />
+                    <Check className="h-4 w-4 text-black group-hover:text-orange transition-colors" />
                   </div>
                   <p className="text-gray-700">{feature}</p>
                 </div>
