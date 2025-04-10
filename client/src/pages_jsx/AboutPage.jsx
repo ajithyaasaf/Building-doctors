@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Link } from "wouter";
 import { CONTACT, STATS } from "@/lib/constants";
+import directorImage from "@/assets/jeyaram.jpg";
 
 const AboutPage = () => {
   useEffect(() => {
@@ -68,7 +69,11 @@ const AboutPage = () => {
 
             <div className="relative">
               <div className="bg-white p-4 rounded-xl shadow-xl relative z-20 overflow-hidden">
-                <div className="w-full h-[400px] rounded-lg bg-gray-300"></div>
+                <img 
+                  src={directorImage} 
+                  alt={CONTACT.director}
+                  className="w-full h-[400px] rounded-lg object-cover object-center"
+                />
               </div>
               <div className="absolute top-8 -right-8 w-72 h-72 bg-primary rounded-full opacity-10 -z-10"></div>
               <div className="absolute -bottom-8 -left-8 w-72 h-72 bg-[#2b4c7e] rounded-full opacity-10 -z-10"></div>
@@ -168,12 +173,12 @@ const AboutPage = () => {
                   <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full -mb-20 -ml-20"></div>
 
                   <div className="relative z-10">
-                    <div className="w-32 h-32 bg-white/20 mb-8 rounded-full mx-auto md:mx-0 relative overflow-hidden backdrop-blur-sm border-4 border-white/30">
-                      <div className="absolute inset-0 bg-primary-800"></div>
-                      <div className="absolute bottom-0 left-0 right-0 h-10 bg-white/20 backdrop-blur-sm"></div>
-                      <div className="absolute inset-0 flex items-center justify-center text-white">
-                        <i className="fas fa-user-tie text-4xl"></i>
-                      </div>
+                    <div className="w-32 h-32 mb-8 rounded-full mx-auto md:mx-0 relative overflow-hidden border-4 border-white/30">
+                      <img 
+                        src={directorImage} 
+                        alt={CONTACT.director}
+                        className="w-full h-full object-cover object-center"
+                      />
                     </div>
 
                     <h3 className="text-white font-montserrat font-bold text-2xl mb-2 text-center md:text-left">
