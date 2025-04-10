@@ -175,8 +175,8 @@ export const intents = pgTable("intents", {
 export const intentSchema = z.object({
   name: z.string().min(1, "Name is required"),
   phone: z.string().min(5, "Phone number is required"),
-  service: z.string().optional().or(z.string()),
-  message: z.string().optional().or(z.string()),
+  service: z.string().default("Urgent Consultation"),
+  message: z.string().default("Building repair inquiry"),
   consent: z.boolean().refine(val => val === true, "You must agree to the terms")
 });
 

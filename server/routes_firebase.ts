@@ -737,8 +737,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const parsedData = intentSchema.parse(req.body);
       
+      // Ensure all required fields are provided
+      const intentData = {
+        name: parsedData.name,
+        phone: parsedData.phone,
+        service: parsedData.service || "Urgent Consultation",
+        message: parsedData.message || "Building repair inquiry",
+        consent: parsedData.consent
+      };
+      
       // Create intent in Firebase
-      const newIntent = await storage.createIntent(parsedData);
+      const newIntent = await storage.createIntent(intentData);
       
       res.status(200).json({
         success: true,
