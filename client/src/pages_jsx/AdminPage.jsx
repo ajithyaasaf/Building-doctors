@@ -110,6 +110,25 @@ const AdminPage = () => {
     enabled: isAuthenticated,
   });
 
+  // Fetch all exit intent form submissions
+  const {
+    data: intentSubmissions = [],
+    isIntentsLoading,
+    isIntentsError,
+  } = useQuery({
+    queryKey: ["intents"],
+    queryFn: async () => {
+      try {
+        const res = await apiRequest("GET", "/api/intents");
+        return await res.json();
+      } catch (error) {
+        console.error("Failed to fetch intent submissions:", error);
+        return [];
+      }
+    },
+    enabled: isAuthenticated,
+  });
+
   // Fetch all contact form submissions
   const {
     data: contactSubmissions = [],
@@ -330,10 +349,37 @@ const AdminPage = () => {
       });
     },
   });
+  
+  // Delete intent form submission mutation
+  const deleteIntentMutation = useMutation({
+    mutationFn: async (id) => {
+      await apiRequest("DELETE", `/api/intents/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["intents"]);
+      toast({
+        title: "Intent form submission deleted",
+        description: "The exit intent form submission has been removed successfully.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Failed to delete",
+        description: "There was an error deleting the intent form submission.",
+        variant: "destructive",
+      });
+    },
+  });
 
   // Filter inquiries based on search term
   const filteredInquiries = inquiries.filter((inquiry) => {
     const searchable = `${inquiry.name} ${inquiry.phone} ${inquiry.email} ${inquiry.issueType} ${inquiry.message} ${inquiry.address}`.toLowerCase();
+    return searchable.includes(searchTerm.toLowerCase());
+  });
+
+  // Filter intent form submissions based on search term
+  const filteredIntents = intentSubmissions.filter((intent) => {
+    const searchable = `${intent.name} ${intent.phone} ${intent.service} ${intent.message}`.toLowerCase();
     return searchable.includes(searchTerm.toLowerCase());
   });
 
@@ -592,7 +638,7 @@ const AdminPage = () => {
             </div>
             
             <Tabs defaultValue="inquiries">
-              <TabsList className="grid w-full grid-cols-6 mb-6">
+              <TabsList className="grid w-full grid-cols-7 mb-6">
                 <TabsTrigger value="inquiries" className="flex items-center gap-2">
                   <ClipboardList className="h-4 w-4 text-white group-hover:text-black transition-colors" />
                   Inquiries
@@ -600,6 +646,10 @@ const AdminPage = () => {
                 <TabsTrigger value="contacts" className="flex items-center gap-2">
                   <MessageSquare className="h-4 w-4 text-white group-hover:text-black transition-colors" />
                   Contacts
+                </TabsTrigger>
+                <TabsTrigger value="intents" className="flex items-center gap-2">
+                  <AlertCircle className="h-4 w-4 text-white group-hover:text-black transition-colors" />
+                  Exit Intent
                 </TabsTrigger>
                 <TabsTrigger value="products" className="flex items-center gap-2">
                   <Package className="h-4 w-4 text-white group-hover:text-black transition-colors" />
@@ -980,6 +1030,180 @@ const AdminPage = () => {
                       </motion.div>
                     ))}
                   </div>
+                )}
+              </TabsContent>
+              
+              <TabsContent value="intents">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-xl font-semibold text-gray-800">Exit Intent Form Submissions</h2>
+                  
+                  {!isIntentsLoading && !isIntentsError && filteredIntents.length > 0 && (
+                    <CSVLink 
+                      data={filterByDateRange(filteredIntents, startDate, endDate).map(intent => ({
+                        ID: intent.id,
+                        Name: intent.name,
+                        Phone: intent.phone,
+                        Service: intent.service || '',
+                        Message: intent.message || '',
+                        'Created At': intent.createdAt ? formatDate(intent.createdAt) : ''
+                      }))}
+                      filename={`exit-intents-${startDate || 'all'}-to-${endDate || 'all'}.csv`}
+                      className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                    >
+                      <Download className="h-4 w-4" />
+                      Export CSV
+                    </CSVLink>
+                  )}
+                </div>
+                
+                {isIntentsLoading ? (
+                  <div className="text-center py-12">
+                    <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-orange-400 border-r-transparent"></div>
+                    <p className="mt-2 text-gray-600">Loading exit intent form submissions...</p>
+                  </div>
+                ) : isIntentsError ? (
+                  <div className="text-center py-12 text-red-600">
+                    Error loading exit intent form submissions. Please try again.
+                  </div>
+                ) : filteredIntents.length === 0 ? (
+                  <div className="text-center py-12 text-gray-500">
+                    {searchTerm ? "No exit intent form submissions match your search." : "No exit intent form submissions yet."}
+                  </div>
+                ) : (
+                  <div className="overflow-auto">
+                    <table className="w-full border-collapse">
+                      <thead>
+                        <tr className="bg-gray-100">
+                          <th className="border border-gray-200 px-4 py-2 text-left">Name</th>
+                          <th className="border border-gray-200 px-4 py-2 text-left">Phone</th>
+                          <th className="border border-gray-200 px-4 py-2 text-left">Service</th>
+                          <th className="border border-gray-200 px-4 py-2 text-left">Date</th>
+                          <th className="border border-gray-200 px-4 py-2 text-center">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {sortByDate(filterByDateRange(filteredIntents, startDate, endDate), sortOrder).map((intent) => (
+                          <tr key={intent.id} className="hover:bg-gray-50">
+                            <td className="border border-gray-200 px-4 py-2">
+                              <div className="flex items-center gap-2">
+                                <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                  <span className="font-semibold text-red-600 text-xs">
+                                    {intent.name.charAt(0).toUpperCase()}
+                                  </span>
+                                </div>
+                                <span>{intent.name}</span>
+                              </div>
+                            </td>
+                            <td className="border border-gray-200 px-4 py-2">{intent.phone}</td>
+                            <td className="border border-gray-200 px-4 py-2">
+                              <span className="inline-block px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">
+                                {intent.service || "Urgent Consultation"}
+                              </span>
+                            </td>
+                            <td className="border border-gray-200 px-4 py-2 text-sm">
+                              {intent.createdAt ? formatDate(intent.createdAt) : "Recent"}
+                            </td>
+                            <td className="border border-gray-200 px-4 py-2">
+                              <div className="flex justify-center gap-2">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => toggleExpand(intent.id)}
+                                >
+                                  <Eye className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="text-red-600 border-red-200 hover:bg-red-50"
+                                  onClick={() => deleteIntentMutation.mutate(intent.id)}
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+                
+                {expandedItem && (
+                  <Dialog open={expandedItem !== null} onOpenChange={(open) => !open && setExpandedItem(null)}>
+                    <DialogContent className="max-w-3xl">
+                      <DialogHeader>
+                        <DialogTitle>Exit Intent Form Details</DialogTitle>
+                      </DialogHeader>
+                      
+                      {intentSubmissions.find(i => i.id === expandedItem) && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
+                          <div>
+                            <h3 className="font-semibold mb-2">Contact Information</h3>
+                            <div className="space-y-2">
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium">Name:</span>
+                                <span>{intentSubmissions.find(i => i.id === expandedItem).name}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium">Phone:</span>
+                                <span>{intentSubmissions.find(i => i.id === expandedItem).phone}</span>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div>
+                            <h3 className="font-semibold mb-2">Form Details</h3>
+                            <div className="space-y-2">
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium">Service:</span>
+                                <span className="inline-block px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">
+                                  {intentSubmissions.find(i => i.id === expandedItem).service || "Urgent Consultation"}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium">Submitted:</span>
+                                <span>
+                                  {intentSubmissions.find(i => i.id === expandedItem).createdAt 
+                                    ? formatDate(intentSubmissions.find(i => i.id === expandedItem).createdAt) 
+                                    : "Recent"}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {intentSubmissions.find(i => i.id === expandedItem).message && (
+                            <div className="col-span-1 md:col-span-2">
+                              <h3 className="font-semibold mb-2">Message</h3>
+                              <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                {intentSubmissions.find(i => i.id === expandedItem).message}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      
+                      <DialogFooter>
+                        <Button
+                          variant="destructive"
+                          onClick={() => {
+                            const id = expandedItem;
+                            setExpandedItem(null);
+                            deleteIntentMutation.mutate(id);
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Delete
+                        </Button>
+                        <Button
+                          variant="outline"
+                          onClick={() => setExpandedItem(null)}
+                        >
+                          Close
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                 )}
               </TabsContent>
               
