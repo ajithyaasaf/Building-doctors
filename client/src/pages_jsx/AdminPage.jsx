@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -45,6 +46,8 @@ const AdminPage = () => {
   const [endDate, setEndDate] = useState("");
   const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
   const [sortOrder, setSortOrder] = useState("desc"); // Default to newest first
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const { toast } = useToast();
 
   // Check if user is already authenticated (from localStorage)
@@ -432,6 +435,19 @@ const AdminPage = () => {
     return date ? new Date(date).toISOString().split('T')[0] : "";
   };
   
+  // Get paginated data
+  const getPaginatedData = (data) => {
+    // Calculate pagination indexes
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    return data.slice(indexOfFirstItem, indexOfLastItem);
+  };
+
+  // Reset to first page when filtering changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, startDate, endDate]);
+  
   // Filter data by date range
   const filterByDateRange = (data, startDate, endDate) => {
     if (!startDate && !endDate) return data;
@@ -469,6 +485,73 @@ const AdminPage = () => {
         ? dateB - dateA // newest first
         : dateA - dateB; // oldest first
     });
+  };
+  
+  // Pagination component
+  const Pagination = ({ totalItems }) => {
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    
+    const handlePrevPage = () => {
+      setCurrentPage(prev => Math.max(prev - 1, 1));
+    };
+    
+    const handleNextPage = () => {
+      setCurrentPage(prev => Math.min(prev + 1, totalPages));
+    };
+    
+    // Only show pagination if there are multiple pages
+    if (totalPages <= 1) return null;
+    
+    return (
+      <div className="flex justify-center items-center mt-6 space-x-2">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={handlePrevPage} 
+          disabled={currentPage === 1}
+          className="flex items-center gap-1"
+        >
+          <ChevronDown className="h-4 w-4 rotate-90" />
+          Previous
+        </Button>
+        
+        <div className="flex items-center gap-1">
+          <span className="text-sm font-medium">Page</span>
+          <span className="px-3 py-1 bg-gray-100 rounded-md text-sm font-medium">
+            {currentPage} of {totalPages}
+          </span>
+        </div>
+        
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={handleNextPage} 
+          disabled={currentPage === totalPages}
+          className="flex items-center gap-1"
+        >
+          Next
+          <ChevronDown className="h-4 w-4 -rotate-90" />
+        </Button>
+        
+        <Select
+          value={itemsPerPage.toString()}
+          onValueChange={(value) => {
+            setItemsPerPage(Number(value));
+            setCurrentPage(1); // Reset to first page when changing items per page
+          }}
+        >
+          <SelectTrigger className="w-[110px] h-9">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="5">5 per page</SelectItem>
+            <SelectItem value="10">10 per page</SelectItem>
+            <SelectItem value="25">25 per page</SelectItem>
+            <SelectItem value="50">50 per page</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+    );
   };
 
   if (!isAuthenticated) {
@@ -724,7 +807,7 @@ const AdminPage = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {sortByDate(filterByDateRange(filteredInquiries, startDate, endDate), sortOrder).map((inquiry) => (
+                        {getPaginatedData(sortByDate(filterByDateRange(filteredInquiries, startDate, endDate), sortOrder)).map((inquiry) => (
                           <tr key={inquiry.id} className="hover:bg-gray-50">
                             <td className="border border-gray-200 px-4 py-2">
                               <div className="flex items-center gap-2">
