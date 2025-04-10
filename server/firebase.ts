@@ -11,7 +11,8 @@ import {
   type Testimonial,
   type Faq,
   type Contact,
-  type Inquiry
+  type Inquiry,
+  type Intent
 } from "@shared/schema";
 import MemStoreSession from 'memorystore';
 import session from 'express-session';
