@@ -230,7 +230,7 @@ const AdminPage = () => {
       await apiRequest("DELETE", `/api/inquiries/${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["inquiries"]);
+      queryClient.invalidateQueries({ queryKey: ["inquiries"] });
       toast({
         title: "Inquiry deleted",
         description: "The inquiry has been removed successfully.",
@@ -251,7 +251,7 @@ const AdminPage = () => {
       await apiRequest("DELETE", `/api/contacts/${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["contacts"]);
+      queryClient.invalidateQueries({ queryKey: ["contacts"] });
       toast({
         title: "Contact submission deleted",
         description: "The contact form submission has been removed successfully.",
