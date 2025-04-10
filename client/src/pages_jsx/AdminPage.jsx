@@ -246,10 +246,19 @@ const AdminPage = () => {
         throw new Error("Invalid inquiry ID");
       }
       
-      await apiRequest("DELETE", `/api/inquiries/${inquiryId}`);
+      const response = await apiRequest("DELETE", `/api/inquiries/${inquiryId}`);
+      return { id: inquiryId, response };
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      // Update cache immediately to reflect the deletion
+      queryClient.setQueryData(["inquiries"], (oldData) => {
+        // Filter out the deleted inquiry
+        return oldData ? oldData.filter(inquiry => inquiry.id !== data.id) : [];
+      });
+      
+      // Still invalidate to ensure consistency with server
       queryClient.invalidateQueries({ queryKey: ["inquiries"] });
+      
       toast({
         title: "Inquiry deleted",
         description: "The inquiry has been removed successfully.",
@@ -284,10 +293,19 @@ const AdminPage = () => {
         throw new Error("Invalid contact ID");
       }
       
-      await apiRequest("DELETE", `/api/contacts/${contactId}`);
+      const response = await apiRequest("DELETE", `/api/contacts/${contactId}`);
+      return { id: contactId, response };
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      // Update cache immediately to reflect the deletion
+      queryClient.setQueryData(["contacts"], (oldData) => {
+        // Filter out the deleted contact
+        return oldData ? oldData.filter(contact => contact.id !== data.id) : [];
+      });
+      
+      // Still invalidate to ensure consistency with server
       queryClient.invalidateQueries({ queryKey: ["contacts"] });
+      
       toast({
         title: "Contact submission deleted",
         description: "The contact form submission has been removed successfully.",
@@ -406,10 +424,19 @@ const AdminPage = () => {
         throw new Error("Invalid intent ID");
       }
       
-      await apiRequest("DELETE", `/api/intents/${intentId}`);
+      const response = await apiRequest("DELETE", `/api/intents/${intentId}`);
+      return { id: intentId, response };
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      // Update cache immediately to reflect the deletion
+      queryClient.setQueryData(["intents"], (oldData) => {
+        // Filter out the deleted intent
+        return oldData ? oldData.filter(intent => intent.id !== data.id) : [];
+      });
+      
+      // Still invalidate to ensure consistency with server
       queryClient.invalidateQueries({ queryKey: ["intents"] });
+      
       toast({
         title: "Intent form submission deleted",
         description: "The exit intent form submission has been removed successfully.",
