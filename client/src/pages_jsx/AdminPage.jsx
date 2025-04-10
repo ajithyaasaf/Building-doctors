@@ -272,7 +272,7 @@ const AdminPage = () => {
       await apiRequest("DELETE", `/api/products/${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["products"]);
+      queryClient.invalidateQueries({ queryKey: ["products"] });
       toast({
         title: "Product deleted",
         description: "The product has been removed successfully.",
@@ -293,7 +293,7 @@ const AdminPage = () => {
       await apiRequest("DELETE", `/api/services/${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["services"]);
+      queryClient.invalidateQueries({ queryKey: ["services"] });
       toast({
         title: "Service deleted",
         description: "The service has been removed successfully.",
@@ -314,7 +314,7 @@ const AdminPage = () => {
       await apiRequest("DELETE", `/api/testimonials/${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["testimonials"]);
+      queryClient.invalidateQueries({ queryKey: ["testimonials"] });
       toast({
         title: "Testimonial deleted",
         description: "The testimonial has been removed successfully.",
@@ -335,7 +335,7 @@ const AdminPage = () => {
       await apiRequest("DELETE", `/api/faqs/${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["faqs"]);
+      queryClient.invalidateQueries({ queryKey: ["faqs"] });
       toast({
         title: "FAQ deleted",
         description: "The FAQ has been removed successfully.",
@@ -356,7 +356,7 @@ const AdminPage = () => {
       await apiRequest("DELETE", `/api/intents/${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["intents"]);
+      queryClient.invalidateQueries({ queryKey: ["intents"] });
       toast({
         title: "Intent form submission deleted",
         description: "The exit intent form submission has been removed successfully.",
@@ -1793,7 +1793,7 @@ const ProductManager = () => {
       return await res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["products"]);
+      queryClient.invalidateQueries({ queryKey: ["products"] });
       toast({
         title: "Product added",
         description: "The product has been added successfully.",
@@ -1817,7 +1817,7 @@ const ProductManager = () => {
       return await res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["products"]);
+      queryClient.invalidateQueries({ queryKey: ["products"] });
       toast({
         title: "Product updated",
         description: "The product has been updated successfully.",
@@ -1840,7 +1840,7 @@ const ProductManager = () => {
       await apiRequest("DELETE", `/api/products/${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["products"]);
+      queryClient.invalidateQueries({ queryKey: ["products"] });
       toast({
         title: "Product deleted",
         description: "The product has been deleted successfully.",
@@ -2208,7 +2208,7 @@ const ServiceManager = () => {
       return await res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["services"]);
+      queryClient.invalidateQueries({ queryKey: ["services"] });
       toast({
         title: "Service added",
         description: "The service has been added successfully.",
@@ -2232,7 +2232,7 @@ const ServiceManager = () => {
       return await res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["services"]);
+      queryClient.invalidateQueries({ queryKey: ["services"] });
       toast({
         title: "Service updated",
         description: "The service has been updated successfully.",
@@ -2255,7 +2255,7 @@ const ServiceManager = () => {
       await apiRequest("DELETE", `/api/services/${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["services"]);
+      queryClient.invalidateQueries({ queryKey: ["services"] });
       toast({
         title: "Service deleted",
         description: "The service has been deleted successfully.",
@@ -2654,7 +2654,7 @@ const TestimonialManager = () => {
       return await res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["testimonials"]);
+      queryClient.invalidateQueries({ queryKey: ["testimonials"] });
       toast({
         title: "Testimonial added",
         description: "The testimonial has been added successfully.",
@@ -2678,7 +2678,7 @@ const TestimonialManager = () => {
       return await res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["testimonials"]);
+      queryClient.invalidateQueries({ queryKey: ["testimonials"] });
       toast({
         title: "Testimonial updated",
         description: "The testimonial has been updated successfully.",
@@ -2701,7 +2701,7 @@ const TestimonialManager = () => {
       await apiRequest("DELETE", `/api/testimonials/${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["testimonials"]);
+      queryClient.invalidateQueries({ queryKey: ["testimonials"] });
       toast({
         title: "Testimonial deleted",
         description: "The testimonial has been deleted successfully.",
@@ -3035,7 +3035,7 @@ const FAQManager = () => {
       return await res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["faqs"]);
+      queryClient.invalidateQueries({ queryKey: ["faqs"] });
       toast({
         title: "FAQ added",
         description: "The FAQ has been added successfully.",
@@ -3059,7 +3059,7 @@ const FAQManager = () => {
       return await res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["faqs"]);
+      queryClient.invalidateQueries({ queryKey: ["faqs"] });
       toast({
         title: "FAQ updated",
         description: "The FAQ has been updated successfully.",
@@ -3082,7 +3082,7 @@ const FAQManager = () => {
       await apiRequest("DELETE", `/api/faqs/${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["faqs"]);
+      queryClient.invalidateQueries({ queryKey: ["faqs"] });
       toast({
         title: "FAQ deleted",
         description: "The FAQ has been deleted successfully.",
