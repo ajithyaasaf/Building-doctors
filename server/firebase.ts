@@ -539,7 +539,73 @@ export class FirebaseStorage {
       throw new Error('Failed to create inquiry in Firebase');
     }
   }
+
+  // ===============================
+  // Intent Form Methods (Exit Intent Popup)
+  // ===============================
+  async getIntents(): Promise<Intent[]> {
+    try {
+      const snapshot = await get(ref(database, 'intents'));
+      if (!snapshot.exists()) return [];
+
+      const intents = snapshot.val();
+      return Object.keys(intents).map(key => ({
+        ...intents[key],
+        id: parseInt(key),
+        createdAt: intents[key].createdAt ? new Date(intents[key].createdAt) : null
+      }));
+    } catch (error) {
+      console.error('Firebase getIntents error:', error);
+      return [];
+    }
+  }
+
+  async createIntent(intent: Omit<Intent, 'id' | 'createdAt'>): Promise<Intent> {
+    try {
+      // Generate a new ID
+      let id = 1;
+
+      // Get the highest existing ID
+      const snapshot = await get(ref(database, 'intents'));
+      if (snapshot.exists()) {
+        const intents = snapshot.val();
+        const intentIds = Object.keys(intents).map(id => parseInt(id));
+        if (intentIds.length > 0) {
+          id = Math.max(...intentIds) + 1;
+        }
+      }
+
+      const createdAt = new Date();
+      const newIntent: Intent = { 
+        ...intent,
+        id,
+        createdAt
+      };
+      
+      await set(ref(database, `intents/${id}`), {
+        ...newIntent,
+        createdAt: createdAt.toISOString() // Store as string in Firebase
+      });
+      
+      return newIntent;
+    } catch (error) {
+      console.error('Intent creation error:', error);
+      throw new Error('Failed to create intent form submission in Firebase');
+    }
+  }
+
+  async deleteIntent(id: number): Promise<boolean> {
+    try {
+      const snapshot = await get(ref(database, `intents/${id}`));
+      if (!snapshot.exists()) return false;
+
+      await remove(ref(database, `intents/${id}`));
+      return true;
+    } catch (error) {
+      console.error('Firebase deleteIntent error:', error);
+      return false;
+    }
+  }
 }
 
-// Export an instance of the Firebase storage
 export const firebaseStorage = new FirebaseStorage();
