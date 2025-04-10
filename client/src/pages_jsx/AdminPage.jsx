@@ -873,6 +873,9 @@ const AdminPage = () => {
                         ))}
                       </tbody>
                     </table>
+                    
+                    {/* Add pagination component */}
+                    <Pagination totalItems={sortByDate(filterByDateRange(filteredInquiries, startDate, endDate), sortOrder).length} />
                   </div>
                 )}
                 
@@ -1189,7 +1192,7 @@ const AdminPage = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {sortByDate(filterByDateRange(filteredIntents, startDate, endDate), sortOrder).map((intent) => (
+                        {getPaginatedData(sortByDate(filterByDateRange(filteredIntents, startDate, endDate), sortOrder)).map((intent) => (
                           <tr key={intent.id} className="hover:bg-gray-50">
                             <td className="border border-gray-200 px-4 py-2">
                               <div className="flex items-center gap-2">
@@ -1254,6 +1257,9 @@ const AdminPage = () => {
                         ))}
                       </tbody>
                     </table>
+                    
+                    {/* Add pagination component */}
+                    <Pagination totalItems={sortByDate(filterByDateRange(filteredIntents, startDate, endDate), sortOrder).length} />
                   </div>
                 )}
                 
@@ -1387,7 +1393,7 @@ const AdminPage = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {sortByDate(filterByDateRange(filteredContacts, startDate, endDate), sortOrder).map((contact) => (
+                        {getPaginatedData(sortByDate(filterByDateRange(filteredContacts, startDate, endDate), sortOrder)).map((contact) => (
                           <tr key={contact.id} className="hover:bg-gray-50">
                             <td className="border border-gray-200 px-4 py-2">
                               <div className="flex items-center gap-2">
