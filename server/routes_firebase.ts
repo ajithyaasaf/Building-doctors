@@ -57,6 +57,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Delete a contact submission
+  app.delete("/api/contacts/:id", async (req, res) => {
+    try {
+      const contactId = parseInt(req.params.id);
+      
+      // Delete contact from Firebase
+      const success = await storage.deleteContact(contactId);
+      
+      if (!success) {
+        return res.status(404).json({
+          success: false,
+          message: "Contact submission not found"
+        });
+      }
+      
+      res.status(200).json({
+        success: true,
+        message: "Contact submission deleted successfully"
+      });
+    } catch (error) {
+      console.error('Contact deletion error:', error);
+      res.status(500).json({
+        success: false,
+        message: "Failed to delete contact submission"
+      });
+    }
+  });
+  
   // ======================
   // INQUIRY ENDPOINTS
   // ======================
@@ -108,6 +136,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
           message: "Failed to process inquiry"
         });
       }
+    }
+  });
+  
+  // Delete an inquiry
+  app.delete("/api/inquiries/:id", async (req, res) => {
+    try {
+      const inquiryId = parseInt(req.params.id);
+      
+      // Delete inquiry from Firebase
+      const success = await storage.deleteInquiry(inquiryId);
+      
+      if (!success) {
+        return res.status(404).json({
+          success: false,
+          message: "Inquiry not found"
+        });
+      }
+      
+      res.status(200).json({
+        success: true,
+        message: "Inquiry deleted successfully"
+      });
+    } catch (error) {
+      console.error('Inquiry deletion error:', error);
+      res.status(500).json({
+        success: false,
+        message: "Failed to delete inquiry"
+      });
     }
   });
   

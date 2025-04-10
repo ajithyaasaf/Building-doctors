@@ -552,6 +552,19 @@ export class FirebaseStorage {
       throw new Error('Failed to create inquiry in Firebase');
     }
   }
+  
+  async deleteInquiry(id: number): Promise<boolean> {
+    try {
+      const snapshot = await get(ref(database, `inquiries/${id}`));
+      if (!snapshot.exists()) return false;
+
+      await remove(ref(database, `inquiries/${id}`));
+      return true;
+    } catch (error) {
+      console.error('Firebase deleteInquiry error:', error);
+      return false;
+    }
+  }
 
   // ===============================
   // Intent Form Methods (Exit Intent Popup)
