@@ -230,7 +230,23 @@ const AdminPage = () => {
   // Delete inquiry mutation
   const deleteInquiryMutation = useMutation({
     mutationFn: async (id) => {
-      await apiRequest("DELETE", `/api/inquiries/${id}`);
+      // If id is null or undefined, log error and return
+      if (id === null || id === undefined) {
+        console.error("Attempted to delete inquiry with null or undefined ID");
+        throw new Error("Invalid inquiry ID");
+      }
+      
+      // Ensure id is a number and not NaN
+      const inquiryId = typeof id === 'string' && id.includes('-') 
+        ? parseInt(id.split('-')[1])
+        : parseInt(id);
+        
+      if (isNaN(inquiryId)) {
+        console.error(`Invalid inquiry ID: ${id}`);
+        throw new Error("Invalid inquiry ID");
+      }
+      
+      await apiRequest("DELETE", `/api/inquiries/${inquiryId}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["inquiries"] });
@@ -239,7 +255,8 @@ const AdminPage = () => {
         description: "The inquiry has been removed successfully.",
       });
     },
-    onError: () => {
+    onError: (error) => {
+      console.error("Error deleting inquiry:", error);
       toast({
         title: "Failed to delete",
         description: "There was an error deleting the inquiry.",
@@ -251,7 +268,23 @@ const AdminPage = () => {
   // Delete contact submission mutation
   const deleteContactMutation = useMutation({
     mutationFn: async (id) => {
-      await apiRequest("DELETE", `/api/contacts/${id}`);
+      // If id is null or undefined, log error and return
+      if (id === null || id === undefined) {
+        console.error("Attempted to delete contact with null or undefined ID");
+        throw new Error("Invalid contact ID");
+      }
+      
+      // Ensure id is a number and not NaN
+      const contactId = typeof id === 'string' && id.includes('contact-') 
+        ? parseInt(id.replace('contact-', ''))
+        : parseInt(id);
+        
+      if (isNaN(contactId)) {
+        console.error(`Invalid contact ID: ${id}`);
+        throw new Error("Invalid contact ID");
+      }
+      
+      await apiRequest("DELETE", `/api/contacts/${contactId}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["contacts"] });
@@ -260,7 +293,8 @@ const AdminPage = () => {
         description: "The contact form submission has been removed successfully.",
       });
     },
-    onError: () => {
+    onError: (error) => {
+      console.error("Error deleting contact:", error);
       toast({
         title: "Failed to delete",
         description: "There was an error deleting the contact submission.",
@@ -356,7 +390,23 @@ const AdminPage = () => {
   // Delete intent form submission mutation
   const deleteIntentMutation = useMutation({
     mutationFn: async (id) => {
-      await apiRequest("DELETE", `/api/intents/${id}`);
+      // If id is null or undefined, log error and return
+      if (id === null || id === undefined) {
+        console.error("Attempted to delete intent with null or undefined ID");
+        throw new Error("Invalid intent ID");
+      }
+      
+      // Ensure id is a number and not NaN
+      const intentId = typeof id === 'string' && id.includes('intent-') 
+        ? parseInt(id.replace('intent-', ''))
+        : parseInt(id);
+        
+      if (isNaN(intentId)) {
+        console.error(`Invalid intent ID: ${id}`);
+        throw new Error("Invalid intent ID");
+      }
+      
+      await apiRequest("DELETE", `/api/intents/${intentId}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["intents"] });
@@ -365,7 +415,8 @@ const AdminPage = () => {
         description: "The exit intent form submission has been removed successfully.",
       });
     },
-    onError: () => {
+    onError: (error) => {
+      console.error("Error deleting intent:", error);
       toast({
         title: "Failed to delete",
         description: "There was an error deleting the intent form submission.",
