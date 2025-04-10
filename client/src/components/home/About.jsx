@@ -1,5 +1,6 @@
 import { Link } from "wouter";
 import { CONTACT } from "@/lib/constants";
+import directorImage from "@/assets/jeyaram.jpg";
 
 const About = () => {
   return (
@@ -57,7 +58,11 @@ const About = () => {
 
           <div className="relative">
             <div className="bg-white p-4 rounded-xl shadow-xl relative z-20 overflow-hidden">
-              <div className="w-full h-[400px] rounded-lg bg-gray-300"></div>
+              <img 
+                src={directorImage} 
+                alt={CONTACT.director}
+                className="w-full h-[400px] rounded-lg object-cover object-center"
+              />
             </div>
             <div className="absolute top-8 -right-8 w-72 h-72 bg-primary rounded-full opacity-10 -z-10"></div>
             <div className="absolute -bottom-8 -left-8 w-72 h-72 bg-[#2b4c7e] rounded-full opacity-10 -z-10"></div>
@@ -98,9 +103,12 @@ const About = () => {
                   <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-primary/20 rounded-full"></div>
 
                   <div className="relative z-10 p-6">
-                    <div className="w-24 h-24 bg-gray-200 rounded-full mx-auto mb-6 relative overflow-hidden border-4 border-white shadow-md">
-                      <div className="absolute inset-0 bg-gray-300"></div>
-                      <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-primary"></div>
+                    <div className="w-24 h-24 rounded-full mx-auto mb-6 relative overflow-hidden border-4 border-white shadow-md">
+                      <img 
+                        src={directorImage} 
+                        alt={CONTACT.director}
+                        className="w-full h-full object-cover object-center"
+                      />
                     </div>
 
                     <div className="text-center mb-6">
