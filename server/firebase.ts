@@ -485,6 +485,19 @@ export class FirebaseStorage {
       throw new Error('Failed to create contact in Firebase');
     }
   }
+  
+  async deleteContact(id: number): Promise<boolean> {
+    try {
+      const snapshot = await get(ref(database, `contacts/${id}`));
+      if (!snapshot.exists()) return false;
+
+      await remove(ref(database, `contacts/${id}`));
+      return true;
+    } catch (error) {
+      console.error('Firebase deleteContact error:', error);
+      return false;
+    }
+  }
 
   // ===============================
   // Inquiry Methods
