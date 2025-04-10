@@ -413,9 +413,12 @@ const AdminPage = () => {
     return searchable.includes(searchTerm.toLowerCase());
   });
 
-  // Toggle expanded item
-  const toggleExpand = (id) => {
-    setExpandedItem(expandedItem === id ? null : id);
+  // Toggle expanded item with type prefix
+  const toggleExpand = (id, type = 'general') => {
+    // If the id already includes a type prefix (e.g., 'contact-123'), use it as is
+    // Otherwise, add the specified type as a prefix
+    const formattedId = id.toString().includes('-') ? id : `${type}-${id}`;
+    setExpandedItem(expandedItem === formattedId ? null : formattedId);
   };
 
   // Format date
@@ -752,14 +755,35 @@ const AdminPage = () => {
                                 >
                                   <Eye className="h-4 w-4" />
                                 </Button>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  className="text-red-600 border-red-200 hover:bg-red-50"
-                                  onClick={() => deleteInquiryMutation.mutate(inquiry.id)}
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      className="text-red-600 border-red-200 hover:bg-red-50"
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>Are you sure you want to delete this inquiry?</AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        This action cannot be undone. This will permanently delete the inquiry 
+                                        from {COMPANY_NAME}'s database.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                      <AlertDialogAction 
+                                        onClick={() => deleteInquiryMutation.mutate(inquiry.id)}
+                                        className="bg-red-600 text-white hover:bg-red-700"
+                                      >
+                                        Delete
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
                               </div>
                             </td>
                           </tr>
@@ -1108,18 +1132,39 @@ const AdminPage = () => {
                                 <Button
                                   variant="outline"
                                   size="sm"
-                                  onClick={() => toggleExpand(intent.id)}
+                                  onClick={() => toggleExpand(intent.id, 'intent')}
                                 >
                                   <Eye className="h-4 w-4" />
                                 </Button>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  className="text-red-600 border-red-200 hover:bg-red-50"
-                                  onClick={() => deleteIntentMutation.mutate(intent.id)}
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      className="text-red-600 border-red-200 hover:bg-red-50"
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>Are you sure you want to delete this intent form?</AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        This action cannot be undone. This will permanently delete the exit intent form 
+                                        from {COMPANY_NAME}'s database.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                      <AlertDialogAction 
+                                        onClick={() => deleteIntentMutation.mutate(intent.id)}
+                                        className="bg-red-600 text-white hover:bg-red-700"
+                                      >
+                                        Delete
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
                               </div>
                             </td>
                           </tr>
@@ -1129,25 +1174,25 @@ const AdminPage = () => {
                   </div>
                 )}
                 
-                {expandedItem && (
-                  <Dialog open={expandedItem !== null} onOpenChange={(open) => !open && setExpandedItem(null)}>
+                {expandedItem && expandedItem.startsWith('intent-') && (
+                  <Dialog open={expandedItem !== null && expandedItem.startsWith('intent-')} onOpenChange={(open) => !open && setExpandedItem(null)}>
                     <DialogContent className="max-w-3xl">
                       <DialogHeader>
                         <DialogTitle>Exit Intent Form Details</DialogTitle>
                       </DialogHeader>
                       
-                      {intentSubmissions.find(i => i.id === expandedItem) && (
+                      {intentSubmissions.find(i => `intent-${i.id}` === expandedItem) && (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
                           <div>
                             <h3 className="font-semibold mb-2">Contact Information</h3>
                             <div className="space-y-2">
                               <div className="flex items-center gap-2">
                                 <span className="font-medium">Name:</span>
-                                <span>{intentSubmissions.find(i => i.id === expandedItem).name}</span>
+                                <span>{intentSubmissions.find(i => `intent-${i.id}` === expandedItem).name}</span>
                               </div>
                               <div className="flex items-center gap-2">
                                 <span className="font-medium">Phone:</span>
-                                <span>{intentSubmissions.find(i => i.id === expandedItem).phone}</span>
+                                <span>{intentSubmissions.find(i => `intent-${i.id}` === expandedItem).phone}</span>
                               </div>
                             </div>
                           </div>
@@ -1158,25 +1203,25 @@ const AdminPage = () => {
                               <div className="flex items-center gap-2">
                                 <span className="font-medium">Service:</span>
                                 <span className="inline-block px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">
-                                  {intentSubmissions.find(i => i.id === expandedItem).service || "Urgent Consultation"}
+                                  {intentSubmissions.find(i => `intent-${i.id}` === expandedItem).service || "Urgent Consultation"}
                                 </span>
                               </div>
                               <div className="flex items-center gap-2">
                                 <span className="font-medium">Submitted:</span>
                                 <span>
-                                  {intentSubmissions.find(i => i.id === expandedItem).createdAt 
-                                    ? formatDate(intentSubmissions.find(i => i.id === expandedItem).createdAt) 
+                                  {intentSubmissions.find(i => `intent-${i.id}` === expandedItem).createdAt 
+                                    ? formatDate(intentSubmissions.find(i => `intent-${i.id}` === expandedItem).createdAt) 
                                     : "Recent"}
                                 </span>
                               </div>
                             </div>
                           </div>
                           
-                          {intentSubmissions.find(i => i.id === expandedItem).message && (
+                          {intentSubmissions.find(i => `intent-${i.id}` === expandedItem).message && (
                             <div className="col-span-1 md:col-span-2">
                               <h3 className="font-semibold mb-2">Message</h3>
                               <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                                {intentSubmissions.find(i => i.id === expandedItem).message}
+                                {intentSubmissions.find(i => `intent-${i.id}` === expandedItem).message}
                               </div>
                             </div>
                           )}
@@ -1187,7 +1232,7 @@ const AdminPage = () => {
                         <Button
                           variant="destructive"
                           onClick={() => {
-                            const id = expandedItem;
+                            const id = parseInt(expandedItem.replace('intent-', ''));
                             setExpandedItem(null);
                             deleteIntentMutation.mutate(id);
                           }}
@@ -1290,14 +1335,35 @@ const AdminPage = () => {
                                 >
                                   <Eye className="h-4 w-4" />
                                 </Button>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  className="text-red-600 border-red-200 hover:bg-red-50"
-                                  onClick={() => deleteContactMutation.mutate(contact.id)}
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      className="text-red-600 border-red-200 hover:bg-red-50"
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>Are you sure you want to delete this contact?</AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        This action cannot be undone. This will permanently delete the contact form 
+                                        from {COMPANY_NAME}'s database.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                      <AlertDialogAction 
+                                        onClick={() => deleteContactMutation.mutate(contact.id)}
+                                        className="bg-red-600 text-white hover:bg-red-700"
+                                      >
+                                        Delete
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
                               </div>
                             </td>
                           </tr>
