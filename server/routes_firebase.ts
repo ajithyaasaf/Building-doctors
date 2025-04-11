@@ -28,7 +28,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // Contact form endpoint
-  app.post("/api/contact", async (req, res) => {
+  app.post("/api/contacts", async (req, res) => {
     try {
       const parsedData = contactSchema.parse(req.body);
       

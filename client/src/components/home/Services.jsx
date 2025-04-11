@@ -58,11 +58,11 @@ const Services = () => {
                   <div className="w-full h-full bg-gray-300"></div>
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-70"></div>
-                {service.videoUrl && (
+               {/*  {service.videoUrl && (
                   <div className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center">
                     <FaYoutube className="text-red-600" />
                   </div>
-                )}
+                )} */}
                 <div className="absolute bottom-4 left-4 right-4">
                   <h3 className="text-white font-montserrat font-bold text-xl">
                     {service.title}

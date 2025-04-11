@@ -44,7 +44,7 @@ const ContactPage = () => {
     try {
       setIsSubmitting(true);
 
-      const response = await apiRequest("POST", "/api/contact", formData);
+      const response = await apiRequest("POST", "/api/contacts", formData);
       
       if (response.ok) {
         toast({
