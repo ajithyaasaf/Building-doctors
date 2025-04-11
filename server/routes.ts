@@ -3,8 +3,8 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { z } from "zod";
 import { 
-  contactSchema, productSchema, inquirySchema, serviceSchema, testimonialSchema, faqSchema,
-  type Product, type Contact, type Inquiry, type Service, type Testimonial, type Faq
+  contactSchema, productSchema, inquirySchema, intentSchema, serviceSchema, testimonialSchema, faqSchema,
+  type Product, type Contact, type Inquiry, type Intent, type Service, type Testimonial, type Faq
 } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -712,6 +712,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
         success: false,
         message: "Failed to delete FAQ"
       });
+    }
+  });
+  
+  // ======================
+  // INTENT ENDPOINTS (Exit Intent Popup)
+  // ======================
+  
+  // Get all intents
+  app.get("/api/intents", async (req, res) => {
+    try {
+      const intents = await storage.getIntents();
+      res.status(200).json(intents);
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "Failed to fetch intents"
+      });
+    }
+  });
+  
+  // Exit intent form endpoint
+  app.post("/api/intents", async (req, res) => {
+    try {
+      const parsedData = intentSchema.parse(req.body);
+      
+      // Create intent in Firebase
+      const newIntent = await storage.createIntent({
+        name: parsedData.name,
+        phone: parsedData.phone,
+        service: parsedData.service || "Urgent Consultation",
+        message: parsedData.message || "Building repair inquiry",
+        consent: parsedData.consent
+      });
+      
+      res.status(200).json({
+        success: true,
+        message: "Exit intent form submitted successfully",
+        intent: newIntent
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        res.status(400).json({
+          success: false,
+          message: "Invalid form data",
+          errors: error.errors
+        });
+      } else {
+        console.error('Intent creation error:', error);
+        res.status(500).json({
+          success: false,
+          message: "Failed to process exit intent form"
+        });
+      }
     }
   });
   
