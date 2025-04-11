@@ -46,6 +46,8 @@ const ContactPage = () => {
 
       const response = await apiRequest("POST", "/api/contacts", formData);
       
+      const responseData = await response.json();
+      
       if (response.ok) {
         toast({
           title: "Message Sent",
@@ -62,13 +64,34 @@ const ContactPage = () => {
           consent: false
         });
       } else {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Something went wrong");
+        // Check for validation errors from the server
+        if (responseData.errors && responseData.errors.length > 0) {
+          throw { 
+            message: responseData.errors[0].message || responseData.message || "Validation error",
+            response: { data: responseData }
+          };
+        } else {
+          throw new Error(responseData.message || "Something went wrong");
+        }
       }
     } catch (error) {
+      console.error("Form submission error:", error);
+      
+      let errorMessage = "Failed to send your message. Please try again.";
+      
+      // Handle error response with validation errors
+      if (error.response && error.response.data && error.response.data.errors) {
+        const validationErrors = error.response.data.errors;
+        if (validationErrors.length > 0) {
+          errorMessage = validationErrors[0].message || errorMessage;
+        }
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      
       toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to send your message. Please try again.",
+        title: "Form Validation Error",
+        description: errorMessage,
         variant: "destructive"
       });
     } finally {
@@ -261,9 +284,15 @@ const ContactPage = () => {
                     onChange={handleChange}
                     rows={5} 
                     className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" 
-                    placeholder="Describe your building problem or requirements"
+                    placeholder="Describe your building problem or requirements (min. 10 characters)"
                     required
+                    minLength={10}
                   ></textarea>
+                  <p className="text-sm text-gray-500 mt-1">
+                    {formData.message.length < 10 ? 
+                      `Please enter at least ${10 - formData.message.length} more character${10 - formData.message.length === 1 ? '' : 's'}` : 
+                      '✓ Message length valid'}
+                  </p>
                 </div>
                 
                 <div className="flex items-start">
