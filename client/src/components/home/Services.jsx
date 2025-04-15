@@ -1,12 +1,24 @@
 import { Link } from "wouter";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { SERVICES } from "../../data/services";
 import { fadeInUp } from "../../utils/animations";
-import { FaYoutube, FaArrowRight } from "react-icons/fa";
+import { FaYoutube, FaArrowRight, FaPlay } from "react-icons/fa";
+import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
 
 const Services = () => {
   // Get top 6 services for homepage display
   const featuredServices = SERVICES.slice(0, 6);
+  
+  // State for video modal
+  const [videoOpen, setVideoOpen] = useState(false);
+  const [currentVideo, setCurrentVideo] = useState("");
+  
+  // Function to open video modal
+  const openVideoModal = (videoUrl) => {
+    setCurrentVideo(videoUrl);
+    setVideoOpen(true);
+  };
 
   return (
     <section
@@ -71,10 +83,39 @@ const Services = () => {
                   <span className="text-xs font-medium text-white">{service.category || 'Building Repair'}</span>
                 </div>
                 
-                <div className="absolute bottom-4 left-4 right-4">
+                {/* YouTube video button */}
+                {service.videoUrl && (
+                  <button 
+                    onClick={(e) => {
+                      e.preventDefault();
+                      openVideoModal(service.videoUrl);
+                    }}
+                    className="absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur-sm text-red-600 rounded-full flex items-center justify-center transform transition-transform duration-300 hover:scale-110 shadow-lg border border-white/20 group/yt"
+                    aria-label={`Watch ${service.title} video`}
+                  >
+                    <FaYoutube className="text-red-600 w-5 h-5 group-hover/yt:scale-110 transition" />
+                    <span className="absolute -bottom-8 right-0 text-white text-xs bg-black/70 px-2 py-1 rounded-md opacity-0 group-hover/yt:opacity-100 transition-opacity duration-300">Watch Video</span>
+                  </button>
+                )}
+                
+                <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center">
                   <h3 className="text-white font-montserrat font-bold text-xl drop-shadow-sm">
                     {service.title}
                   </h3>
+                  
+                  {/* Play button for services with video */}
+                  {service.videoUrl && (
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        openVideoModal(service.videoUrl);
+                      }}
+                      className="flex items-center justify-center space-x-1 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-white text-xs hover:bg-white/30 transition-colors border border-white/20"
+                    >
+                      <FaPlay className="w-3 h-3" />
+                      <span>Play</span>
+                    </button>
+                  )}
                 </div>
               </div>
               <div className="p-6">
@@ -231,6 +272,37 @@ const Services = () => {
           </div>
         </motion.div>
       </div>
+      
+      {/* Video Modal */}
+      <Dialog open={videoOpen} onOpenChange={setVideoOpen}>
+        <DialogContent className="sm:max-w-4xl max-h-[90vh] p-0 bg-black border-none overflow-hidden rounded-xl">
+          <div className="relative w-full pb-[56.25%] h-0">
+            {currentVideo && (
+              <iframe
+                src={`${currentVideo.includes('youtube.com') 
+                  ? currentVideo.replace('watch?v=', 'embed/') 
+                  : currentVideo.includes('youtu.be')
+                    ? `https://www.youtube.com/embed/${currentVideo.split('/').pop()}`
+                    : currentVideo}?autoplay=1&rel=0`}
+                title="Service Video"
+                className="absolute top-0 left-0 w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+            )}
+            
+            <button 
+              onClick={() => setVideoOpen(false)} 
+              className="absolute top-4 right-4 z-50 bg-black/70 text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-black hover:scale-105 transition-all"
+              aria-label="Close video"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 };
