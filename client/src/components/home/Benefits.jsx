@@ -68,8 +68,8 @@ const Benefits = () => {
           </p>
         </div>
 
-        {/* Interactive Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-6xl mx-auto">
+        {/* Interactive Cards with 3D Effects */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-6xl mx-auto perspective-1000">
           {BENEFITS.map((benefit) => (
             <div
               key={benefit.id}
@@ -83,9 +83,13 @@ const Benefits = () => {
               {/* Front Card */}
               <div 
                 className={`absolute inset-0 bg-white rounded-2xl p-8 flex flex-col shadow-xl border border-gray-100
-                  transform transition-all duration-500 [transform-style:preserve-3d] [backface-visibility:hidden]
-                  ${activeCard === benefit.id ? "opacity-0 [transform:rotateY(180deg)]" : "opacity-100 [transform:rotateY(0deg)]"}
+                  transform transition-all duration-500
+                  ${activeCard === benefit.id ? "opacity-0 rotate-y-180" : "opacity-100 rotate-y-0"}
                 `}
+                style={{ 
+                  transformStyle: 'preserve-3d',
+                  backfaceVisibility: 'hidden'
+                }}
               >
                 {/* Curved banner with icon */}
                 <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-16 h-16 bg-primary rounded-full flex items-center justify-center shadow-lg">
@@ -116,9 +120,13 @@ const Benefits = () => {
               {/* Back of card */}
               <div 
                 className={`absolute inset-0 bg-gradient-to-br from-primary to-primary/80 rounded-2xl p-8 flex flex-col text-white
-                  transform transition-all duration-500 [transform-style:preserve-3d] [backface-visibility:hidden]
-                  ${activeCard === benefit.id ? "opacity-100 [transform:rotateY(0deg)]" : "opacity-0 [transform:rotateY(180deg)]"}
+                  transform transition-all duration-500
+                  ${activeCard === benefit.id ? "opacity-100 rotate-y-0" : "opacity-0 rotate-y-180"}
                 `}
+                style={{ 
+                  transformStyle: 'preserve-3d',
+                  backfaceVisibility: 'hidden'
+                }}
               >
                 <div className="flex flex-col h-full justify-center items-center text-center">
                   <h3 className="font-montserrat font-bold text-xl md:text-2xl mb-6">

@@ -87,10 +87,35 @@ export default {
             height: "0",
           },
         },
+        "float": {
+          "0%, 100%": {
+            transform: "translateY(0)",
+          },
+          "50%": {
+            transform: "translateY(20px)",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "float": "float 6s ease-in-out infinite",
+        "spin-slow": "spin 8s linear infinite",
+      },
+      extend: {
+        perspective: {
+          '1000': '1000px',
+        },
+        transformStyle: {
+          '3d': 'preserve-3d',
+        },
+        backfaceVisibility: {
+          'hidden': 'hidden',
+        },
+        rotate: {
+          'y-180': 'rotateY(180deg)',
+          'y-0': 'rotateY(0deg)',
+        },
       },
     },
   },
