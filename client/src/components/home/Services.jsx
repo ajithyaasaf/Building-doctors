@@ -104,18 +104,7 @@ const Services = () => {
                   </h3>
                   
                   {/* Play button for services with video */}
-                  {service.videoUrl && (
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        openVideoModal(service.videoUrl);
-                      }}
-                      className="flex items-center justify-center space-x-1 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-white text-xs hover:bg-white/30 transition-colors border border-white/20"
-                    >
-                      <FaPlay className="w-3 h-3" />
-                      <span>Play</span>
-                    </button>
-                  )}
+                 
                 </div>
               </div>
               <div className="p-6">
@@ -280,10 +269,10 @@ const Services = () => {
             {currentVideo && (
               <iframe
                 src={`${currentVideo.includes('youtube.com') 
-                  ? currentVideo.replace('watch?v=', 'embed/') 
+                  ? currentVideo.replace('watch?v=', 'embed/').split('&')[0] 
                   : currentVideo.includes('youtu.be')
-                    ? `https://www.youtube.com/embed/${currentVideo.split('/').pop()}`
-                    : currentVideo}?autoplay=1&rel=0`}
+                    ? `https://www.youtube.com/embed/${currentVideo.split('/').pop().split('?')[0]}`
+                    : currentVideo.split('?')[0]}?autoplay=1&rel=0`}
                 title="Service Video"
                 className="absolute top-0 left-0 w-full h-full"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
