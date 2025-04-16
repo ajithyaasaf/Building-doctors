@@ -81,13 +81,13 @@ const Hero = () => {
   return (
     <section
       id="home"
-      className="pt-20 overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-primary/90 min-h-[90vh] flex items-center relative"
+      className="pt-20 overflow-hidden bg-gradient-to-br from-primary/95 via-primary/85 to-primary/70 min-h-[90vh] flex items-center relative"
     >
       {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-full bg-[url('https://buildingdoctor.org/assets/images/texture-pattern.png')] opacity-5 mix-blend-overlay"></div>
         <motion.div 
-          className="absolute top-10 right-10 w-96 h-96 rounded-full bg-blue-400/10 blur-3xl"
+          className="absolute top-10 right-10 w-96 h-96 rounded-full bg-primary/20 blur-3xl"
           animate={{ 
             scale: [1, 1.2, 1],
             opacity: [0.3, 0.2, 0.3],
@@ -149,7 +149,7 @@ const Hero = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.4 }}
-              className="text-blue-100 text-lg md:text-xl leading-relaxed mb-10 max-w-xl"
+              className="text-white/80 text-lg md:text-xl leading-relaxed mb-10 max-w-xl"
             >
               We diagnose and treat all building ailments with precision. From
               waterproofing to structural repairs, our experts provide
@@ -168,10 +168,10 @@ const Hero = () => {
                 "Guaranteed Leak-Free Results",
               ].map((feature, i) => (
                 <div key={i} className="flex items-center group">
-                  <div className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center mr-3 text-green-400">
+                  <div className="w-6 h-6 rounded-full bg-yellow-400/20 flex items-center justify-center mr-3 text-yellow-400">
                     <CheckCircle2 className="h-4 w-4 group-hover:scale-110 transition-transform" />
                   </div>
-                  <p className="text-blue-50 font-medium">{feature}</p>
+                  <p className="text-white/90 font-medium">{feature}</p>
                 </div>
               ))}
             </motion.div>
@@ -184,8 +184,8 @@ const Hero = () => {
             >
               <Link href="/services">
                 <span className="relative inline-flex group/btn">
-                  <span className="absolute inset-0 translate-x-1.5 translate-y-1.5 bg-yellow-500/20 rounded-full transform transition-transform group-hover/btn:translate-x-0 group-hover/btn:translate-y-0"></span>
-                  <span className="relative inline-flex items-center gap-2 bg-yellow-500 text-slate-900 px-8 py-4 rounded-full font-medium transition shadow-lg">
+                  <span className="absolute inset-0 translate-x-1.5 translate-y-1.5 bg-primary/20 rounded-full transform transition-transform group-hover/btn:translate-x-0 group-hover/btn:translate-y-0"></span>
+                  <span className="relative inline-flex items-center gap-2 bg-primary text-white px-8 py-4 rounded-full font-medium transition shadow-lg">
                     Book A Diagnosis
                     <ArrowRight className="ml-2 w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />
                   </span>
@@ -215,7 +215,7 @@ const Hero = () => {
                   ))}
                 </div>
                 <div className="ml-3">
-                  <p className="text-xs text-blue-200">Trusted by</p>
+                  <p className="text-xs text-white/70">Trusted by</p>
                   <p className="text-sm font-semibold text-white">2,000+ Happy Clients</p>
                 </div>
               </div>
@@ -239,7 +239,7 @@ const Hero = () => {
               className="relative"
             >
               {/* Main image with fancy border */}
-              <div className="relative z-20 overflow-hidden rounded-2xl shadow-2xl border-4 border-white/10 bg-gradient-to-br from-blue-500/20 to-primary/20 backdrop-blur-sm">
+              <div className="relative z-20 overflow-hidden rounded-2xl shadow-2xl border-4 border-white/10 bg-gradient-to-br from-primary/40 to-primary/20 backdrop-blur-sm">
                 <img
                   src={img1}
                   alt="Building Doctor Professional"
@@ -316,7 +316,7 @@ const Hero = () => {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.8 }}
-                className="absolute -bottom-5 right-20 z-30 bg-yellow-500 text-slate-900 px-5 py-3 rounded-full shadow-lg flex items-center"
+                className="absolute -bottom-5 right-20 z-30 bg-primary text-white px-5 py-3 rounded-full shadow-lg flex items-center"
               >
                 <span className="text-xl font-bold mr-1">10+</span>
                 <span className="text-sm font-medium">Years Experience</span>
