@@ -165,78 +165,93 @@ const Benefits = () => {
 
         {/* Stats Section */}
         <div className="mt-32 relative">
-          {/* Animated gradient border */}
-          <div className="absolute -inset-px rounded-3xl bg-gradient-to-r from-primary/60 via-primary to-primary/60 opacity-70 blur-sm"></div>
+          {/* Animated 3D effect with layered cards */}
+          <div className="absolute inset-0 -translate-x-4 translate-y-4 rounded-3xl bg-primary/20 transform rotate-2"></div>
+          <div className="absolute inset-0 -translate-x-2 translate-y-2 rounded-3xl bg-primary/30 transform rotate-1"></div>
 
-          <div className="relative bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
+          <div className="relative bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
             <div className="grid grid-cols-1 md:grid-cols-2">
-              <div className="p-8 md:p-12 lg:p-16">
-                <div className="inline-flex items-center px-4 py-2 bg-primary/10 rounded-full text-primary text-sm font-medium mb-6">
-                  <Building2 className="w-4 h-4 mr-2" />
+              <div className="p-8 md:p-12 lg:p-16 relative">
+                {/* Decorative corner accent */}
+                <div className="absolute top-0 left-0 w-24 h-24 bg-primary/5 rounded-br-3xl"></div>
+                <div className="absolute bottom-0 right-0 w-40 h-40 bg-primary/5 rounded-tl-3xl"></div>
+                
+                <div className="inline-flex items-center px-5 py-2.5 bg-primary/10 rounded-full text-primary text-sm font-medium mb-8 relative z-10">
+                  <Building2 className="w-5 h-5 mr-2" />
                   <span>Our Impact</span>
                 </div>
 
-                <h2 className="font-montserrat font-bold text-3xl md:text-4xl lg:text-5xl mb-6 leading-tight">
+                <h2 className="font-montserrat font-bold text-3xl md:text-4xl lg:text-5xl mb-8 leading-tight relative z-10">
                   Trusted by
-                  <br />
-                  <span className="text-primary">Thousands</span> in Madurai
+                  <span className="inline-block relative ml-3">
+                    <span className="text-primary">Thousands</span>
+                    <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 385 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M3 9C116.62 4.46 243.652 2.99999 382 9" stroke="hsl(30 76% 50%)" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </span> 
+                  in Madurai
                 </h2>
 
-                <p className="text-gray-600 mb-10 text-lg leading-relaxed">
+                <p className="text-gray-600 mb-12 text-lg leading-relaxed relative z-10">
                   Our reputation is built on consistent quality, transparent
                   pricing, and an unwavering commitment to solving your building
                   repair challenges.
                 </p>
 
-                <div className="grid grid-cols-2 gap-8 mb-10">
+                <div className="grid grid-cols-2 gap-10 mb-12 relative z-10">
                   {STATS.map((stat) => (
-                    <div key={stat.id} className="group">
-                      <div className="relative overflow-hidden">
-                        {/* Animated underline */}
-                        <div className="absolute -bottom-1 left-0 w-0 h-1 bg-primary rounded-full group-hover:w-full transition-all duration-700"></div>
-
-                        <div className="text-5xl font-bold text-primary mb-2 group-hover:scale-110 origin-left transition-transform duration-300">
+                    <div key={stat.id} className="group relative transform transition-transform hover:-translate-y-1">
+                      {/* Card background with subtle gradient */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-white rounded-xl -z-10"></div>
+                      
+                      <div className="p-6">
+                        <div className="text-5xl font-bold text-primary mb-3 flex items-center">
                           {stat.value}
+                          <span className="ml-1.5 text-lg text-primary/60">+</span>
                         </div>
+                        <p className="text-gray-700 font-medium">{stat.label}</p>
                       </div>
-                      <p className="text-gray-700 font-medium">{stat.label}</p>
+                      
+                      {/* Corner accent */}
+                      <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-primary/30 rounded-br-xl"></div>
                     </div>
                   ))}
                 </div>
 
                 <Link
                   to="/about"
-                  className="inline-flex items-center gap-3 group"
+                  className="inline-flex items-center gap-3 group relative z-10"
                 >
-                  <span className="inline-flex items-center bg-primary text-white px-8 py-4 rounded-full font-medium shadow-lg shadow-primary/20 group-hover:shadow-xl group-hover:shadow-primary/30 transition-all">
-                    Our Story
+                  <span className="relative inline-flex group/btn">
+                    <span className="absolute inset-0 translate-x-1.5 translate-y-1.5 bg-primary/20 rounded-full transform transition-transform group-hover/btn:translate-x-0 group-hover/btn:translate-y-0"></span>
+                    <span className="relative inline-flex items-center gap-2 bg-primary text-white px-8 py-4 rounded-full font-medium transition shadow-lg">
+                      Our Story
+                      <ArrowRight className="ml-2 w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />
+                    </span>
                   </span>
-                  <div className="w-10 h-10 rounded-full border-2 border-primary flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
-                  </div>
                 </Link>
               </div>
 
-              {/* Graphical representation of a building */}
-              <div className="relative min-h-[400px] md:h-auto bg-gradient-to-br from-primary/90 to-primary overflow-hidden">
+              {/* Graphical representation with Building Doctor */}
+              <div className="relative min-h-[500px] md:h-auto bg-gradient-to-br from-primary/90 to-primary overflow-hidden">
                 {/* Abstract building silhouette */}
-                <div className="absolute inset-x-0 bottom-0 flex items-end justify-center opacity-30">
-                  <div className="w-16 h-64 bg-white/20 mx-1 rounded-t-lg"></div>
-                  <div className="w-16 h-80 bg-white/20 mx-1 rounded-t-lg"></div>
-                  <div className="w-16 h-72 bg-white/20 mx-1 rounded-t-lg"></div>
-                  <div className="w-16 h-56 bg-white/20 mx-1 rounded-t-lg"></div>
-                  <div className="w-16 h-64 bg-white/20 mx-1 rounded-t-lg"></div>
+                <div className="absolute inset-x-0 bottom-0 flex items-end justify-center opacity-20">
+                  <div className="w-14 h-64 bg-white/30 mx-1 rounded-t-lg transform -skew-x-2"></div>
+                  <div className="w-14 h-80 bg-white/30 mx-1 rounded-t-lg transform skew-x-3"></div>
+                  <div className="w-14 h-72 bg-white/30 mx-1 rounded-t-lg transform -skew-x-1"></div>
+                  <div className="w-14 h-56 bg-white/30 mx-1 rounded-t-lg transform skew-x-2"></div>
+                  <div className="w-14 h-64 bg-white/30 mx-1 rounded-t-lg"></div>
                 </div>
 
                 {/* Building Doctor Icon */}
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="relative w-[280px] h-[280px]">
+                  <div className="relative w-[400px] h-[400px]">
                     <img 
                       src={buildingDoctorIcon} 
                       alt="Building Doctor" 
                       className="w-full h-full object-contain z-10 relative animate-float"
                     />
-                    <div className="absolute inset-0 bg-white/10 rounded-full blur-2xl -z-10 animate-pulse"></div>
+                    <div className="absolute inset-0 bg-white/20 rounded-full blur-3xl -z-10 animate-pulse"></div>
                   </div>
                 </div>
               </div>
