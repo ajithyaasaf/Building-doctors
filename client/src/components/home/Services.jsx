@@ -5,6 +5,7 @@ import { SERVICES } from "../../data/services";
 import { fadeInUp } from "../../utils/animations";
 import { FaYoutube, FaArrowRight, FaPlay } from "react-icons/fa";
 import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
+import workerImage from "../../assets/img1.png";
 
 const Services = () => {
   // Get top 6 services for homepage display
@@ -104,7 +105,18 @@ const Services = () => {
                   </h3>
                   
                   {/* Play button for services with video */}
-                 
+                  {service.videoUrl && (
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        openVideoModal(service.videoUrl);
+                      }}
+                      className="flex items-center justify-center space-x-1 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-white text-xs hover:bg-white/30 transition-colors border border-white/20"
+                    >
+                      <FaPlay className="w-3 h-3" />
+                      <span>Play</span>
+                    </button>
+                  )}
                 </div>
               </div>
               <div className="p-6">
@@ -247,8 +259,8 @@ const Services = () => {
             
             <div className="md:col-span-5 relative h-60 md:h-auto overflow-hidden">
               <img
-                src="https://buildingdoctor.org/assets/images/consultation-bg.jpg"
-                alt="Building Doctor Consultation"
+                src={workerImage}
+                alt="Building Doctor Professional in Orange Safety Suit"
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover/cta:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-l from-[#2b4c7e]/90 via-[#2b4c7e]/50 to-transparent mix-blend-multiply"></div>
