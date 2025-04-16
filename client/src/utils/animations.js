@@ -2,22 +2,22 @@
  * Animation utilities for Framer Motion
  */
 
-// Fade in animation variant
-export const fadeIn = (delay = 0, duration = 0.6) => ({
+// Fade in animation variant - optimized
+export const fadeIn = (delay = 0, duration = 0.4) => ({
   hidden: { opacity: 0 },
   visible: { 
     opacity: 1,
     transition: {
       delay,
       duration,
-      ease: "easeInOut"
+      ease: "easeOut"
     }
   }
 });
 
-// Fade in upward animation variant
-export const fadeInUp = (delay = 0, duration = 0.6) => ({
-  hidden: { opacity: 0, y: 30 },
+// Fade in upward animation variant - optimized
+export const fadeInUp = (delay = 0, duration = 0.4) => ({
+  hidden: { opacity: 0, y: 20 },
   visible: { 
     opacity: 1, 
     y: 0,
@@ -29,9 +29,9 @@ export const fadeInUp = (delay = 0, duration = 0.6) => ({
   }
 });
 
-// Fade in downward animation variant
-export const fadeInDown = (delay = 0, duration = 0.6) => ({
-  hidden: { opacity: 0, y: -30 },
+// Fade in downward animation variant - optimized
+export const fadeInDown = (delay = 0, duration = 0.4) => ({
+  hidden: { opacity: 0, y: -20 },
   visible: { 
     opacity: 1, 
     y: 0,
@@ -43,9 +43,9 @@ export const fadeInDown = (delay = 0, duration = 0.6) => ({
   }
 });
 
-// Fade in from left animation variant
-export const fadeInLeft = (delay = 0, duration = 0.7) => ({
-  hidden: { opacity: 0, x: -60 },
+// Fade in from left animation variant - optimized
+export const fadeInLeft = (delay = 0, duration = 0.5) => ({
+  hidden: { opacity: 0, x: -30 },
   visible: { 
     opacity: 1, 
     x: 0,
@@ -57,9 +57,9 @@ export const fadeInLeft = (delay = 0, duration = 0.7) => ({
   }
 });
 
-// Fade in from right animation variant
-export const fadeInRight = (delay = 0, duration = 0.7) => ({
-  hidden: { opacity: 0, x: 60 },
+// Fade in from right animation variant - optimized
+export const fadeInRight = (delay = 0, duration = 0.5) => ({
+  hidden: { opacity: 0, x: 30 },
   visible: { 
     opacity: 1, 
     x: 0,
@@ -71,9 +71,9 @@ export const fadeInRight = (delay = 0, duration = 0.7) => ({
   }
 });
 
-// Zoom in animation variant
-export const zoomIn = (delay = 0, duration = 0.5) => ({
-  hidden: { opacity: 0, scale: 0.8 },
+// Zoom in animation variant - optimized
+export const zoomIn = (delay = 0, duration = 0.4) => ({
+  hidden: { opacity: 0, scale: 0.9 },
   visible: { 
     opacity: 1, 
     scale: 1,
@@ -85,8 +85,8 @@ export const zoomIn = (delay = 0, duration = 0.5) => ({
   }
 });
 
-// Staggered children animation
-export const staggerContainer = (staggerChildren = 0.1, delayChildren = 0) => ({
+// Staggered children animation - optimized
+export const staggerContainer = (staggerChildren = 0.05, delayChildren = 0) => ({
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -97,24 +97,24 @@ export const staggerContainer = (staggerChildren = 0.1, delayChildren = 0) => ({
   }
 });
 
-// Bounce animation
-export const bounce = (delay = 0, duration = 0.6) => ({
+// Bounce animation - optimized
+export const bounce = (delay = 0, duration = 0.5) => ({
   hidden: { opacity: 0, y: 0 },
   visible: { 
     opacity: 1,
-    y: [0, -15, 0],
+    y: [0, -10, 0],
     transition: {
       delay,
       duration,
-      times: [0, 0.6, 1],
+      times: [0, 0.5, 1],
       ease: "easeOut"
     }
   }
 });
 
-// Rotate in animation
-export const rotateIn = (delay = 0, duration = 0.5) => ({
-  hidden: { opacity: 0, rotate: -15 },
+// Rotate in animation - optimized
+export const rotateIn = (delay = 0, duration = 0.4) => ({
+  hidden: { opacity: 0, rotate: -10 },
   visible: { 
     opacity: 1, 
     rotate: 0,
@@ -126,40 +126,37 @@ export const rotateIn = (delay = 0, duration = 0.5) => ({
   }
 });
 
-// Pulse animation for WhatsApp button
+// Pulse animation for WhatsApp button - optimized
 export const pulse = {
-  initial: { scale: 0.8, opacity: 0 },
+  initial: { scale: 1, opacity: 0.7 },
   animate: { 
-    scale: [1, 1.2, 1],
-    opacity: [0.7, 0.5, 0.7],
+    scale: [1, 1.15, 1],
+    opacity: [0.8, 0.6, 0.8],
     transition: {
-      duration: 2,
+      duration: 3,
       repeat: Infinity,
       repeatType: "loop"
     }
   }
 };
 
-// Page transition animation for App.jsx
+// Page transition animation for App.jsx - optimized for performance
 export const pageTransition = {
   initial: {
-    opacity: 0,
-    y: 20
+    opacity: 0
   },
   animate: {
     opacity: 1,
-    y: 0,
     transition: {
-      duration: 0.5,
-      ease: "easeInOut"
+      duration: 0.3,
+      ease: "easeOut"
     }
   },
   exit: {
     opacity: 0,
-    y: -20,
     transition: {
-      duration: 0.3,
-      ease: "easeInOut"
+      duration: 0.2,
+      ease: "easeIn"
     }
   }
 };

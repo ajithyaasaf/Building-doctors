@@ -1,14 +1,7 @@
 import { Route, Switch, useLocation } from "wouter";
 import { Toaster } from "@/components/ui/toaster";
 import { AnimatePresence, motion } from "framer-motion";
-import HomePage from "./pages_jsx/HomePage.jsx";
-import NotFound from "./pages/not-found.jsx";
-import ServicesPage from "./pages_jsx/ServicesPage.jsx";
-import ProductsPage from "./pages_jsx/ProductsPage.jsx";
-import ProductDetailPage from "./pages_jsx/ProductDetailPage.jsx";
-import AboutPage from "./pages_jsx/AboutPage.jsx";
-import ContactPage from "./pages_jsx/ContactPage.jsx";
-import AdminPage from "./pages_jsx/AdminPage.jsx";
+import { Suspense, lazy, useEffect } from "react";
 import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
 import WhatsappButton from "./components/WhatsappButton";
@@ -17,8 +10,23 @@ import ExitIntentPopup from "./components/ExitIntentPopup";
 import ChatBot from "./components/chat/ChatBot";
 import { pageTransition } from "./utils/animations";
 
+// Lazy load pages to improve initial load performance
+const HomePage = lazy(() => import("./pages_jsx/HomePage.jsx"));
+const NotFound = lazy(() => import("./pages/not-found.jsx"));
+const ServicesPage = lazy(() => import("./pages_jsx/ServicesPage.jsx"));
+const ProductsPage = lazy(() => import("./pages_jsx/ProductsPage.jsx"));
+const ProductDetailPage = lazy(() => import("./pages_jsx/ProductDetailPage.jsx"));
+const AboutPage = lazy(() => import("./pages_jsx/AboutPage.jsx"));
+const ContactPage = lazy(() => import("./pages_jsx/ContactPage.jsx"));
+const AdminPage = lazy(() => import("./pages_jsx/AdminPage.jsx"));
+
 function App() {
   const [location] = useLocation();
+
+  // Scroll to top when route changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location]);
 
   // Create a PageWrapper component for animations
   const PageWrapper = ({ children }) => (
@@ -29,8 +37,17 @@ function App() {
       variants={pageTransition}
       className="w-full"
     >
-      {children}
+      <Suspense fallback={<LoadingSpinner />}>
+        {children}
+      </Suspense>
     </motion.div>
+  );
+
+  // Loading spinner component
+  const LoadingSpinner = () => (
+    <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+    </div>
   );
 
   // Show the popup form only on the homepage
