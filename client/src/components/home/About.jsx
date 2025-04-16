@@ -61,7 +61,7 @@ const About = () => {
               <img 
                 src={directorImage} 
                 alt={CONTACT.director}
-                className="w-full h-[400px] rounded-lg object-cover object-center"
+                className="w-full h-[400px] rounded-lg object-cover object-top"
               />
             </div>
             <div className="absolute top-8 -right-8 w-72 h-72 bg-primary rounded-full opacity-10 -z-10"></div>
@@ -107,7 +107,7 @@ const About = () => {
                       <img 
                         src={directorImage} 
                         alt={CONTACT.director}
-                        className="w-full h-full object-cover object-center"
+                        className="w-full h-full object-cover object-top"
                       />
                     </div>
 
