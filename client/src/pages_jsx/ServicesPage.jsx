@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { fadeIn, fadeInUp } from "../utils/animations";
 import { FaYoutube, FaArrowRight } from "react-icons/fa";
 import sealantsImage from "../assets/sealants.png";
+import tileAidsImage from "../assets/Tile-Aids.png";
 
 const ServicesPage = () => {
   const [activeVideoUrl, setActiveVideoUrl] = useState("");
@@ -82,23 +83,36 @@ const ServicesPage = () => {
               >
                 <div className={`order-2 ${service.id % 2 === 0 ? 'md:order-1' : 'md:order-2'}`}>
                   <div className="relative rounded-xl overflow-hidden shadow-lg group">
-                    {/* Use sealants image for specific service, otherwise use the service image */}
-                    {service.image || service.title.includes('Sealant') ? (
+                    {/* Use custom images for specific services, otherwise use the service image */}
+                    {service.image || service.title.includes('Sealant') || service.title.toLowerCase().includes('tile') ? (
                       <>
                         <img 
-                          src={service.title.includes('Sealant') ? sealantsImage : service.image} 
+                          src={
+                            service.title.includes('Sealant') ? sealantsImage : 
+                            service.title.toLowerCase().includes('tile') ? tileAidsImage : 
+                            service.image
+                          } 
                           alt={service.title} 
                           className="h-96 object-cover w-full transition-transform duration-500 group-hover:scale-105"
                         />
                         {service.videoUrl && (
                           <div 
-                            className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer"
+                            className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer"
                             onClick={() => openVideoModal(service.videoUrl)}
+                            style={{
+                              backgroundImage: service.title.toLowerCase().includes('tile') ? `url(${tileAidsImage})` : 'none',
+                              backgroundSize: 'cover',
+                              backgroundPosition: 'center',
+                              backdropFilter: 'blur(2px)'
+                            }}
                           >
-                            <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center">
+                            {/* Semi-transparent overlay for better visibility of play button */}
+                            <div className="absolute inset-0 bg-black opacity-50"></div>
+                            
+                            <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center z-10 shadow-lg hover:scale-105 transition-transform">
                               <FaYoutube className="text-red-600 text-3xl" />
                             </div>
-                            <span className="absolute bottom-4 left-4 text-white font-medium">Watch Video</span>
+                            <span className="absolute bottom-4 left-4 text-white font-medium z-10 bg-black/50 px-3 py-1 rounded-full">Watch Video</span>
                           </div>
                         )}
                       </>
