@@ -9,6 +9,7 @@ import {
   RotateCw,
   MoveRight,
 } from "lucide-react";
+import buildingDoctorIcon from "../../assets/building-doctor-icon.png";
 
 const Benefits = () => {
   const [activeCard, setActiveCard] = useState(null);
@@ -227,20 +228,16 @@ const Benefits = () => {
                   <div className="w-16 h-64 bg-white/20 mx-1 rounded-t-lg"></div>
                 </div>
 
-                {/* Animated dots */}
-                <div className="absolute inset-0">
-                  {Array.from({ length: 50 }).map((_, i) => (
-                    <div
-                      key={i}
-                      className="absolute w-1.5 h-1.5 bg-white rounded-full animate-pulse"
-                      style={{
-                        top: `${Math.random() * 100}%`,
-                        left: `${Math.random() * 100}%`,
-                        opacity: Math.random() * 0.5 + 0.2,
-                        animationDelay: `${Math.random() * 5}s`,
-                      }}
-                    ></div>
-                  ))}
+                {/* Building Doctor Icon */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="relative w-[280px] h-[280px]">
+                    <img 
+                      src={buildingDoctorIcon} 
+                      alt="Building Doctor" 
+                      className="w-full h-full object-contain z-10 relative animate-float"
+                    />
+                    <div className="absolute inset-0 bg-white/10 rounded-full blur-2xl -z-10 animate-pulse"></div>
+                  </div>
                 </div>
               </div>
             </div>

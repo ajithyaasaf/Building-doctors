@@ -69,8 +69,8 @@ const AboutPage = () => {
 
             <div className="relative">
               <div className="bg-white p-4 rounded-xl shadow-xl relative z-20 overflow-hidden">
-                <img 
-                  src={directorImage} 
+                <img
+                  src={directorImage}
                   alt={CONTACT.director}
                   className="w-full h-[400px] rounded-lg object-cover object-center"
                 />
@@ -84,7 +84,6 @@ const AboutPage = () => {
 
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
-          Our Team
           <div className="max-w-3xl mx-auto text-center mb-12">
             <div className="inline-block px-4 py-1 bg-primary bg-opacity-10 rounded-full mb-3">
               <p className="text-xs font-semibold text-white uppercase tracking-wider">
@@ -174,8 +173,8 @@ const AboutPage = () => {
 
                   <div className="relative z-10">
                     <div className="w-32 h-32 mb-8 rounded-full mx-auto md:mx-0 relative overflow-hidden border-4 border-white/30">
-                      <img 
-                        src={directorImage} 
+                      <img
+                        src={directorImage}
                         alt={CONTACT.director}
                         className="w-full h-full object-cover object-center"
                       />
