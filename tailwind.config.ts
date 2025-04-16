@@ -95,12 +95,28 @@ export default {
             transform: "translateY(20px)",
           },
         },
+        "spin-reverse": {
+          from: {
+            transform: "rotate(0deg)",
+          },
+          to: {
+            transform: "rotate(-360deg)",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "float": "float 6s ease-in-out infinite",
         "spin-slow": "spin 8s linear infinite",
+        "spin-reverse": "spin-reverse 2s linear infinite",
+      },
+      transitionDelay: {
+        '100': '100ms',
+        '200': '200ms',
+        '300': '300ms',
+        '400': '400ms',
+        '500': '500ms',
       },
       extend: {
         perspective: {
