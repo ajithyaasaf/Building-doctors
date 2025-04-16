@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { fadeIn, fadeInUp } from "../utils/animations";
 import { FaYoutube, FaArrowRight } from "react-icons/fa";
+import sealantsImage from "../assets/sealants.png";
 
 const ServicesPage = () => {
   const [activeVideoUrl, setActiveVideoUrl] = useState("");
@@ -81,10 +82,11 @@ const ServicesPage = () => {
               >
                 <div className={`order-2 ${service.id % 2 === 0 ? 'md:order-1' : 'md:order-2'}`}>
                   <div className="relative rounded-xl overflow-hidden shadow-lg group">
-                    {service.image ? (
+                    {/* Use sealants image for specific service, otherwise use the service image */}
+                    {service.image || service.title.includes('Sealant') ? (
                       <>
                         <img 
-                          src={service.image} 
+                          src={service.title.includes('Sealant') ? sealantsImage : service.image} 
                           alt={service.title} 
                           className="h-96 object-cover w-full transition-transform duration-500 group-hover:scale-105"
                         />
