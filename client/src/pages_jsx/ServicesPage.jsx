@@ -7,6 +7,7 @@ import { fadeIn, fadeInUp } from "../utils/animations";
 import { FaYoutube, FaArrowRight } from "react-icons/fa";
 import sealantsImage from "../assets/sealants.png";
 import tileAidsImage from "../assets/Tile-Aids.png";
+import thermalImage from "../assets/thermal.png";
 
 const ServicesPage = () => {
   const [activeVideoUrl, setActiveVideoUrl] = useState("");
@@ -84,12 +85,13 @@ const ServicesPage = () => {
                 <div className={`order-2 ${service.id % 2 === 0 ? 'md:order-1' : 'md:order-2'}`}>
                   <div className="relative rounded-xl overflow-hidden shadow-lg group">
                     {/* Use custom images for specific services, otherwise use the service image */}
-                    {service.image || service.title.includes('Sealant') || service.title.toLowerCase().includes('tile') ? (
+                    {service.image || service.title.includes('Sealant') || service.title.toLowerCase().includes('tile') || service.title.toLowerCase().includes('thermal') || service.title.toLowerCase().includes('waterproof') ? (
                       <>
                         <img 
                           src={
                             service.title.includes('Sealant') ? sealantsImage : 
                             service.title.toLowerCase().includes('tile') ? tileAidsImage : 
+                            service.title.toLowerCase().includes('thermal') || service.title.toLowerCase().includes('waterproof') ? thermalImage :
                             service.image
                           } 
                           alt={service.title} 
@@ -100,7 +102,8 @@ const ServicesPage = () => {
                             className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer"
                             onClick={() => openVideoModal(service.videoUrl)}
                             style={{
-                              backgroundImage: service.title.toLowerCase().includes('tile') ? `url(${tileAidsImage})` : 'none',
+                              backgroundImage: service.title.toLowerCase().includes('tile') ? `url(${tileAidsImage})` : 
+                                              service.title.toLowerCase().includes('thermal') || service.title.toLowerCase().includes('waterproof') ? `url(${thermalImage})` : 'none',
                               backgroundSize: 'cover',
                               backgroundPosition: 'center',
                               backdropFilter: 'blur(2px)'
