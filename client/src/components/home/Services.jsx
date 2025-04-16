@@ -6,6 +6,7 @@ import { fadeInUp } from "../../utils/animations";
 import { FaYoutube, FaArrowRight, FaPlay } from "react-icons/fa";
 import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
 import workerImage from "../../assets/img1.png";
+import sealantsImage from "../../assets/sealants.png";
 
 const Services = () => {
   // Get top 6 services for homepage display
@@ -67,9 +68,12 @@ const Services = () => {
               className="bg-white rounded-2xl overflow-hidden shadow-lg transition-all transform hover:-translate-y-2 hover:shadow-2xl duration-300 group border border-gray-100"
             >
               <div className="relative h-56 overflow-hidden">
-                {service.image ? (
+                {service.image || service.title.includes('Sealant') ? (
                   <img
-                    src={service.image}
+                    src={
+                      service.title.includes('Sealant') ? sealantsImage : 
+                      service.image
+                    }
                     alt={service.title}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
