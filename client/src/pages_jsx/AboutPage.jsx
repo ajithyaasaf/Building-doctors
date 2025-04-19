@@ -274,7 +274,7 @@ const AboutPage = () => {
                           Leads a team of 25+ skilled technicians, consultants,
                           and customer service professionals dedicated to
                           providing the highest quality building maintenance
-                          solutions with personalized service.
+                          solutions with personalized service
                         </p>
                       </div>
                     </div>
