@@ -6,7 +6,13 @@ import { createServer } from "http";
 
 // server/firebase.ts
 import { initializeApp } from "firebase/app";
-import { getDatabase, ref, set, get, remove } from "firebase/database";
+import {
+  getDatabase,
+  ref,
+  set,
+  get,
+  remove
+} from "firebase/database";
 import MemStoreSession from "memorystore";
 import session from "express-session";
 var firebaseConfig = {
@@ -17,21 +23,19 @@ var firebaseConfig = {
   storageBucket: "jpfinserv-892e1.firebasestorage.app",
   messagingSenderId: "166323272116",
   appId: "1:166323272116:web:f440b4c76307ea463c5ae1",
-  measurementId: "G-GBS93JTW1R",
+  measurementId: "G-GBS93JTW1R"
 };
 var firebaseApp = initializeApp(firebaseConfig);
 var database = getDatabase(firebaseApp);
 var MemoryStore = MemStoreSession(session);
 var sessionStore = new MemoryStore({
-  checkPeriod: 864e5,
+  checkPeriod: 864e5
   // Prune expired entries every 24h
 });
 var FirebaseStorage = class {
   checkDatabaseAvailability() {
     if (!firebaseConfig.databaseURL) {
-      console.warn(
-        "Firebase Database URL is not set. Using in-memory fallback data."
-      );
+      console.warn("Firebase Database URL is not set. Using in-memory fallback data.");
       return false;
     }
     return true;
@@ -94,7 +98,7 @@ var FirebaseStorage = class {
       const products2 = snapshot.val();
       return Object.keys(products2).map((key) => ({
         ...products2[key],
-        id: parseInt(key),
+        id: parseInt(key)
       }));
     } catch (error) {
       console.error("Firebase getProducts error:", error);
@@ -163,7 +167,7 @@ var FirebaseStorage = class {
       const services2 = snapshot.val();
       return Object.keys(services2).map((key) => ({
         ...services2[key],
-        id: parseInt(key),
+        id: parseInt(key)
       }));
     } catch (error) {
       console.error("Firebase getServices error:", error);
@@ -232,7 +236,7 @@ var FirebaseStorage = class {
       const testimonials2 = snapshot.val();
       return Object.keys(testimonials2).map((key) => ({
         ...testimonials2[key],
-        id: parseInt(key),
+        id: parseInt(key)
       }));
     } catch (error) {
       console.error("Firebase getTestimonials error:", error);
@@ -254,9 +258,7 @@ var FirebaseStorage = class {
       const snapshot = await get(ref(database, "testimonials"));
       if (snapshot.exists()) {
         const testimonials2 = snapshot.val();
-        const testimonialIds = Object.keys(testimonials2).map((id2) =>
-          parseInt(id2)
-        );
+        const testimonialIds = Object.keys(testimonials2).map((id2) => parseInt(id2));
         if (testimonialIds.length > 0) {
           id = Math.max(...testimonialIds) + 1;
         }
@@ -303,7 +305,7 @@ var FirebaseStorage = class {
       const faqs2 = snapshot.val();
       return Object.keys(faqs2).map((key) => ({
         ...faqs2[key],
-        id: parseInt(key),
+        id: parseInt(key)
       }));
     } catch (error) {
       console.error("Firebase getFaqs error:", error);
@@ -373,7 +375,7 @@ var FirebaseStorage = class {
       return Object.keys(contacts2).map((key) => ({
         ...contacts2[key],
         id: parseInt(key),
-        createdAt: new Date(contacts2[key].createdAt),
+        createdAt: new Date(contacts2[key].createdAt)
       }));
     } catch (error) {
       console.error("Firebase getContacts error:", error);
@@ -387,9 +389,7 @@ var FirebaseStorage = class {
       if (snapshot.exists() && snapshot.val() !== null) {
         const contacts2 = snapshot.val();
         if (contacts2 && Object.keys(contacts2).length > 0) {
-          const contactIds = Object.keys(contacts2)
-            .filter((key) => !isNaN(parseInt(key)))
-            .map((key) => parseInt(key));
+          const contactIds = Object.keys(contacts2).filter((key) => !isNaN(parseInt(key))).map((key) => parseInt(key));
           if (contactIds.length > 0) {
             id = Math.max(...contactIds) + 1;
           }
@@ -403,14 +403,14 @@ var FirebaseStorage = class {
       const newContact = {
         ...contact,
         id,
-        createdAt,
+        createdAt
       };
       if (isNaN(newContact.id)) {
         throw new Error("Cannot create contact with invalid ID (NaN)");
       }
       await set(ref(database, `contacts/${id}`), {
         ...newContact,
-        createdAt: createdAt.toISOString(),
+        createdAt: createdAt.toISOString()
         // Store as string in Firebase
       });
       return newContact;
@@ -441,9 +441,7 @@ var FirebaseStorage = class {
       return Object.keys(inquiries2).map((key) => ({
         ...inquiries2[key],
         id: parseInt(key),
-        createdAt: inquiries2[key].createdAt
-          ? new Date(inquiries2[key].createdAt)
-          : null,
+        createdAt: inquiries2[key].createdAt ? new Date(inquiries2[key].createdAt) : null
       }));
     } catch (error) {
       console.error("Firebase getInquiries error:", error);
@@ -457,9 +455,7 @@ var FirebaseStorage = class {
       if (snapshot.exists() && snapshot.val() !== null) {
         const inquiries2 = snapshot.val();
         if (inquiries2 && Object.keys(inquiries2).length > 0) {
-          const inquiryIds = Object.keys(inquiries2)
-            .filter((key) => !isNaN(parseInt(key)))
-            .map((key) => parseInt(key));
+          const inquiryIds = Object.keys(inquiries2).filter((key) => !isNaN(parseInt(key))).map((key) => parseInt(key));
           if (inquiryIds.length > 0) {
             id = Math.max(...inquiryIds) + 1;
           }
@@ -473,14 +469,14 @@ var FirebaseStorage = class {
       const newInquiry = {
         ...inquiry,
         id,
-        createdAt,
+        createdAt
       };
       if (isNaN(newInquiry.id)) {
         throw new Error("Cannot create inquiry with invalid ID (NaN)");
       }
       await set(ref(database, `inquiries/${id}`), {
         ...newInquiry,
-        createdAt: createdAt.toISOString(),
+        createdAt: createdAt.toISOString()
         // Store as string in Firebase
       });
       return newInquiry;
@@ -511,9 +507,7 @@ var FirebaseStorage = class {
       return Object.keys(intents2).map((key) => ({
         ...intents2[key],
         id: parseInt(key),
-        createdAt: intents2[key].createdAt
-          ? new Date(intents2[key].createdAt)
-          : null,
+        createdAt: intents2[key].createdAt ? new Date(intents2[key].createdAt) : null
       }));
     } catch (error) {
       console.error("Firebase getIntents error:", error);
@@ -527,9 +521,7 @@ var FirebaseStorage = class {
       if (snapshot.exists() && snapshot.val() !== null) {
         const intents2 = snapshot.val();
         if (intents2 && Object.keys(intents2).length > 0) {
-          const intentIds = Object.keys(intents2)
-            .filter((key) => !isNaN(parseInt(key)))
-            .map((key) => parseInt(key));
+          const intentIds = Object.keys(intents2).filter((key) => !isNaN(parseInt(key))).map((key) => parseInt(key));
           if (intentIds.length > 0) {
             id = Math.max(...intentIds) + 1;
           }
@@ -543,14 +535,14 @@ var FirebaseStorage = class {
       const newIntent = {
         ...intent,
         id,
-        createdAt,
+        createdAt
       };
       if (isNaN(newIntent.id)) {
         throw new Error("Cannot create intent with invalid ID (NaN)");
       }
       await set(ref(database, `intents/${id}`), {
         ...newIntent,
-        createdAt: createdAt.toISOString(),
+        createdAt: createdAt.toISOString()
         // Store as string in Firebase
       });
       return newIntent;
@@ -594,10 +586,8 @@ var storage = {
   // Testimonial methods
   getTestimonials: () => firebaseStorage.getTestimonials(),
   getTestimonial: (id) => firebaseStorage.getTestimonial(id),
-  createTestimonial: (testimonial) =>
-    firebaseStorage.createTestimonial(testimonial),
-  updateTestimonial: (id, testimonial) =>
-    firebaseStorage.updateTestimonial(id, testimonial),
+  createTestimonial: (testimonial) => firebaseStorage.createTestimonial(testimonial),
+  updateTestimonial: (id, testimonial) => firebaseStorage.updateTestimonial(id, testimonial),
   deleteTestimonial: (id) => firebaseStorage.deleteTestimonial(id),
   // FAQ methods
   getFaqs: () => firebaseStorage.getFaqs(),
@@ -618,33 +608,24 @@ var storage = {
   createIntent: (intent) => firebaseStorage.createIntent(intent),
   deleteIntent: (id) => firebaseStorage.deleteIntent(id),
   // Session store
-  sessionStore,
+  sessionStore
 };
 
 // server/routes_firebase.ts
 import { z as z2 } from "zod";
 
 // shared/schema.ts
-import {
-  pgTable,
-  text,
-  serial,
-  integer,
-  boolean,
-  real,
-  varchar,
-  timestamp,
-} from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, real, varchar, timestamp } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 var users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
-  password: text("password").notNull(),
+  password: text("password").notNull()
 });
 var insertUserSchema = createInsertSchema(users).pick({
   username: true,
-  password: true,
+  password: true
 });
 var contacts = pgTable("contacts", {
   id: serial("id").primaryKey(),
@@ -654,7 +635,7 @@ var contacts = pgTable("contacts", {
   service: text("service").notNull(),
   message: text("message").notNull(),
   consent: boolean("consent").notNull(),
-  createdAt: timestamp("created_at").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow()
 });
 var contactSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -662,9 +643,7 @@ var contactSchema = z.object({
   phone: z.string().min(10, "Phone number must be valid"),
   service: z.string().min(1, "Please select a service"),
   message: z.string().min(5, "Message must be at least 5 characters"),
-  consent: z
-    .boolean()
-    .refine((val) => val === true, "You must agree to the terms"),
+  consent: z.boolean().refine((val) => val === true, "You must agree to the terms")
 });
 var inquiries = pgTable("inquiries", {
   id: serial("id").primaryKey(),
@@ -674,19 +653,15 @@ var inquiries = pgTable("inquiries", {
   issueType: text("issue_type").notNull(),
   message: text("message"),
   address: text("address"),
-  createdAt: timestamp("created_at").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow()
 });
 var inquirySchema = z.object({
   name: z.string().min(1, "Name is required"),
-  email: z
-    .string()
-    .email("Invalid email address")
-    .optional()
-    .or(z.string().length(0)),
+  email: z.string().email("Invalid email address").optional().or(z.string().length(0)),
   phone: z.string().min(5, "Phone number is required"),
   issueType: z.string().optional().or(z.string()),
   message: z.string().optional().or(z.string().length(0)),
-  address: z.string().optional().or(z.string().length(0)),
+  address: z.string().optional().or(z.string().length(0))
 });
 var products = pgTable("products", {
   id: serial("id").primaryKey(),
@@ -697,10 +672,10 @@ var products = pgTable("products", {
   rating: real("rating").notNull().default(4),
   isBestseller: boolean("is_bestseller").default(false),
   isNew: boolean("is_new").default(false),
-  category: varchar("category", { length: 50 }).notNull(),
+  category: varchar("category", { length: 50 }).notNull()
 });
 var productSchema = createInsertSchema(products).omit({
-  id: true,
+  id: true
 });
 var services = pgTable("services", {
   id: serial("id").primaryKey(),
@@ -708,10 +683,10 @@ var services = pgTable("services", {
   description: text("description").notNull(),
   image: text("image").notNull(),
   features: text("features").array().notNull(),
-  slug: varchar("slug", { length: 50 }).notNull(),
+  slug: varchar("slug", { length: 50 }).notNull()
 });
 var serviceSchema = createInsertSchema(services).omit({
-  id: true,
+  id: true
 });
 var testimonials = pgTable("testimonials", {
   id: serial("id").primaryKey(),
@@ -719,18 +694,18 @@ var testimonials = pgTable("testimonials", {
   location: varchar("location", { length: 255 }).notNull(),
   rating: real("rating").notNull(),
   content: text("content").notNull(),
-  hasVideo: boolean("has_video").default(false),
+  hasVideo: boolean("has_video").default(false)
 });
 var testimonialSchema = createInsertSchema(testimonials).omit({
-  id: true,
+  id: true
 });
 var faqs = pgTable("faqs", {
   id: serial("id").primaryKey(),
   question: varchar("question", { length: 255 }).notNull(),
-  answer: text("answer").notNull(),
+  answer: text("answer").notNull()
 });
 var faqSchema = createInsertSchema(faqs).omit({
-  id: true,
+  id: true
 });
 var intents = pgTable("intents", {
   id: serial("id").primaryKey(),
@@ -739,16 +714,14 @@ var intents = pgTable("intents", {
   service: text("service").notNull(),
   message: text("message").notNull(),
   consent: boolean("consent").notNull(),
-  createdAt: timestamp("created_at").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow()
 });
 var intentSchema = z.object({
   name: z.string().min(1, "Name is required"),
   phone: z.string().min(5, "Phone number is required"),
   service: z.string().default("Urgent Consultation"),
   message: z.string().default("Building repair inquiry"),
-  consent: z
-    .boolean()
-    .refine((val) => val === true, "You must agree to the terms"),
+  consent: z.boolean().refine((val) => val === true, "You must agree to the terms")
 });
 
 // server/routes_firebase.ts
@@ -760,7 +733,7 @@ async function registerRoutes(app2) {
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: "Failed to fetch contacts",
+        message: "Failed to fetch contacts"
       });
     }
   });
@@ -771,28 +744,22 @@ async function registerRoutes(app2) {
       res.status(200).json({
         success: true,
         message: "Contact form submitted successfully",
-        contact: newContact,
+        contact: newContact
       });
     } catch (error) {
       if (error instanceof z2.ZodError) {
-        console.log(
-          "Contact form validation error:",
-          JSON.stringify(error.errors, null, 2)
-        );
-        console.log(
-          "Contact form data received:",
-          JSON.stringify(req.body, null, 2)
-        );
+        console.log("Contact form validation error:", JSON.stringify(error.errors, null, 2));
+        console.log("Contact form data received:", JSON.stringify(req.body, null, 2));
         res.status(400).json({
           success: false,
           message: "Invalid form data",
-          errors: error.errors,
+          errors: error.errors
         });
       } else {
         console.error("Contact creation error:", error);
         res.status(500).json({
           success: false,
-          message: "Failed to process contact form",
+          message: "Failed to process contact form"
         });
       }
     }
@@ -804,18 +771,18 @@ async function registerRoutes(app2) {
       if (!success) {
         return res.status(404).json({
           success: false,
-          message: "Contact submission not found",
+          message: "Contact submission not found"
         });
       }
       res.status(200).json({
         success: true,
-        message: "Contact submission deleted successfully",
+        message: "Contact submission deleted successfully"
       });
     } catch (error) {
       console.error("Contact deletion error:", error);
       res.status(500).json({
         success: false,
-        message: "Failed to delete contact submission",
+        message: "Failed to delete contact submission"
       });
     }
   });
@@ -826,7 +793,7 @@ async function registerRoutes(app2) {
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: "Failed to fetch inquiries",
+        message: "Failed to fetch inquiries"
       });
     }
   });
@@ -839,25 +806,25 @@ async function registerRoutes(app2) {
         phone: parsedData.phone,
         issueType: parsedData.issueType || "",
         message: parsedData.message || null,
-        address: parsedData.address || null,
+        address: parsedData.address || null
       });
       res.status(200).json({
         success: true,
         message: "Inquiry submitted successfully",
-        inquiry: newInquiry,
+        inquiry: newInquiry
       });
     } catch (error) {
       if (error instanceof z2.ZodError) {
         res.status(400).json({
           success: false,
           message: "Invalid inquiry data",
-          errors: error.errors,
+          errors: error.errors
         });
       } else {
         console.error("Inquiry creation error:", error);
         res.status(500).json({
           success: false,
-          message: "Failed to process inquiry",
+          message: "Failed to process inquiry"
         });
       }
     }
@@ -869,18 +836,18 @@ async function registerRoutes(app2) {
       if (!success) {
         return res.status(404).json({
           success: false,
-          message: "Inquiry not found",
+          message: "Inquiry not found"
         });
       }
       res.status(200).json({
         success: true,
-        message: "Inquiry deleted successfully",
+        message: "Inquiry deleted successfully"
       });
     } catch (error) {
       console.error("Inquiry deletion error:", error);
       res.status(500).json({
         success: false,
-        message: "Failed to delete inquiry",
+        message: "Failed to delete inquiry"
       });
     }
   });
@@ -896,20 +863,18 @@ async function registerRoutes(app2) {
       if (search && typeof search === "string") {
         const searchTerm = search.toLowerCase();
         products2 = products2.filter(
-          (product) =>
-            product.name.toLowerCase().includes(searchTerm) ||
-            product.description.toLowerCase().includes(searchTerm)
+          (product) => product.name.toLowerCase().includes(searchTerm) || product.description.toLowerCase().includes(searchTerm)
         );
       }
       res.status(200).json({
         success: true,
-        products: products2,
+        products: products2
       });
     } catch (error) {
       console.error("Product fetch error:", error);
       res.status(500).json({
         success: false,
-        message: "Failed to fetch products",
+        message: "Failed to fetch products"
       });
     }
   });
@@ -920,18 +885,18 @@ async function registerRoutes(app2) {
       if (!product) {
         return res.status(404).json({
           success: false,
-          message: "Product not found",
+          message: "Product not found"
         });
       }
       res.status(200).json({
         success: true,
-        product,
+        product
       });
     } catch (error) {
       console.error("Product fetch error:", error);
       res.status(500).json({
         success: false,
-        message: "Failed to fetch product",
+        message: "Failed to fetch product"
       });
     }
   });
@@ -942,25 +907,25 @@ async function registerRoutes(app2) {
         ...parsedData,
         rating: parsedData.rating || 4,
         isBestseller: parsedData.isBestseller || false,
-        isNew: parsedData.isNew || false,
+        isNew: parsedData.isNew || false
       });
       res.status(201).json({
         success: true,
         message: "Product added successfully",
-        product: newProduct,
+        product: newProduct
       });
     } catch (error) {
       if (error instanceof z2.ZodError) {
         res.status(400).json({
           success: false,
           message: "Invalid product data",
-          errors: error.errors,
+          errors: error.errors
         });
       } else {
         console.error("Product creation error:", error);
         res.status(500).json({
           success: false,
-          message: "Failed to add product",
+          message: "Failed to add product"
         });
       }
     }
@@ -973,38 +938,32 @@ async function registerRoutes(app2) {
       if (!existingProduct) {
         return res.status(404).json({
           success: false,
-          message: "Product not found",
+          message: "Product not found"
         });
       }
       const updatedProduct = await storage.updateProduct(productId, {
         ...parsedData,
         rating: parsedData.rating || existingProduct.rating,
-        isBestseller:
-          parsedData.isBestseller !== void 0
-            ? parsedData.isBestseller
-            : existingProduct.isBestseller,
-        isNew:
-          parsedData.isNew !== void 0
-            ? parsedData.isNew
-            : existingProduct.isNew,
+        isBestseller: parsedData.isBestseller !== void 0 ? parsedData.isBestseller : existingProduct.isBestseller,
+        isNew: parsedData.isNew !== void 0 ? parsedData.isNew : existingProduct.isNew
       });
       res.status(200).json({
         success: true,
         message: "Product updated successfully",
-        product: updatedProduct,
+        product: updatedProduct
       });
     } catch (error) {
       if (error instanceof z2.ZodError) {
         res.status(400).json({
           success: false,
           message: "Invalid product data",
-          errors: error.errors,
+          errors: error.errors
         });
       } else {
         console.error("Product update error:", error);
         res.status(500).json({
           success: false,
-          message: "Failed to update product",
+          message: "Failed to update product"
         });
       }
     }
@@ -1016,18 +975,18 @@ async function registerRoutes(app2) {
       if (!success) {
         return res.status(404).json({
           success: false,
-          message: "Product not found",
+          message: "Product not found"
         });
       }
       res.status(200).json({
         success: true,
-        message: "Product deleted successfully",
+        message: "Product deleted successfully"
       });
     } catch (error) {
       console.error("Product deletion error:", error);
       res.status(500).json({
         success: false,
-        message: "Failed to delete product",
+        message: "Failed to delete product"
       });
     }
   });
@@ -1039,7 +998,7 @@ async function registerRoutes(app2) {
       console.error("Services fetch error:", error);
       res.status(500).json({
         success: false,
-        message: "Failed to fetch services",
+        message: "Failed to fetch services"
       });
     }
   });
@@ -1050,7 +1009,7 @@ async function registerRoutes(app2) {
       if (!service) {
         return res.status(404).json({
           success: false,
-          message: "Service not found",
+          message: "Service not found"
         });
       }
       res.status(200).json(service);
@@ -1058,7 +1017,7 @@ async function registerRoutes(app2) {
       console.error("Service fetch error:", error);
       res.status(500).json({
         success: false,
-        message: "Failed to fetch service",
+        message: "Failed to fetch service"
       });
     }
   });
@@ -1069,20 +1028,20 @@ async function registerRoutes(app2) {
       res.status(201).json({
         success: true,
         message: "Service added successfully",
-        service: newService,
+        service: newService
       });
     } catch (error) {
       if (error instanceof z2.ZodError) {
         res.status(400).json({
           success: false,
           message: "Invalid service data",
-          errors: error.errors,
+          errors: error.errors
         });
       } else {
         console.error("Service creation error:", error);
         res.status(500).json({
           success: false,
-          message: "Failed to add service",
+          message: "Failed to add service"
         });
       }
     }
@@ -1095,26 +1054,26 @@ async function registerRoutes(app2) {
       if (!updatedService) {
         return res.status(404).json({
           success: false,
-          message: "Service not found",
+          message: "Service not found"
         });
       }
       res.status(200).json({
         success: true,
         message: "Service updated successfully",
-        service: updatedService,
+        service: updatedService
       });
     } catch (error) {
       if (error instanceof z2.ZodError) {
         res.status(400).json({
           success: false,
           message: "Invalid service data",
-          errors: error.errors,
+          errors: error.errors
         });
       } else {
         console.error("Service update error:", error);
         res.status(500).json({
           success: false,
-          message: "Failed to update service",
+          message: "Failed to update service"
         });
       }
     }
@@ -1126,18 +1085,18 @@ async function registerRoutes(app2) {
       if (!success) {
         return res.status(404).json({
           success: false,
-          message: "Service not found",
+          message: "Service not found"
         });
       }
       res.status(200).json({
         success: true,
-        message: "Service deleted successfully",
+        message: "Service deleted successfully"
       });
     } catch (error) {
       console.error("Service deletion error:", error);
       res.status(500).json({
         success: false,
-        message: "Failed to delete service",
+        message: "Failed to delete service"
       });
     }
   });
@@ -1149,7 +1108,7 @@ async function registerRoutes(app2) {
       console.error("Testimonials fetch error:", error);
       res.status(500).json({
         success: false,
-        message: "Failed to fetch testimonials",
+        message: "Failed to fetch testimonials"
       });
     }
   });
@@ -1160,7 +1119,7 @@ async function registerRoutes(app2) {
       if (!testimonial) {
         return res.status(404).json({
           success: false,
-          message: "Testimonial not found",
+          message: "Testimonial not found"
         });
       }
       res.status(200).json(testimonial);
@@ -1168,7 +1127,7 @@ async function registerRoutes(app2) {
       console.error("Testimonial fetch error:", error);
       res.status(500).json({
         success: false,
-        message: "Failed to fetch testimonial",
+        message: "Failed to fetch testimonial"
       });
     }
   });
@@ -1177,25 +1136,25 @@ async function registerRoutes(app2) {
       const parsedData = testimonialSchema.parse(req.body);
       const newTestimonial = await storage.createTestimonial({
         ...parsedData,
-        hasVideo: parsedData.hasVideo || false,
+        hasVideo: parsedData.hasVideo || false
       });
       res.status(201).json({
         success: true,
         message: "Testimonial added successfully",
-        testimonial: newTestimonial,
+        testimonial: newTestimonial
       });
     } catch (error) {
       if (error instanceof z2.ZodError) {
         res.status(400).json({
           success: false,
           message: "Invalid testimonial data",
-          errors: error.errors,
+          errors: error.errors
         });
       } else {
         console.error("Testimonial creation error:", error);
         res.status(500).json({
           success: false,
-          message: "Failed to add testimonial",
+          message: "Failed to add testimonial"
         });
       }
     }
@@ -1208,36 +1167,30 @@ async function registerRoutes(app2) {
       if (!existingTestimonial) {
         return res.status(404).json({
           success: false,
-          message: "Testimonial not found",
+          message: "Testimonial not found"
         });
       }
-      const updatedTestimonial = await storage.updateTestimonial(
-        testimonialId,
-        {
-          ...parsedData,
-          hasVideo:
-            parsedData.hasVideo !== void 0
-              ? parsedData.hasVideo
-              : existingTestimonial.hasVideo,
-        }
-      );
+      const updatedTestimonial = await storage.updateTestimonial(testimonialId, {
+        ...parsedData,
+        hasVideo: parsedData.hasVideo !== void 0 ? parsedData.hasVideo : existingTestimonial.hasVideo
+      });
       res.status(200).json({
         success: true,
         message: "Testimonial updated successfully",
-        testimonial: updatedTestimonial,
+        testimonial: updatedTestimonial
       });
     } catch (error) {
       if (error instanceof z2.ZodError) {
         res.status(400).json({
           success: false,
           message: "Invalid testimonial data",
-          errors: error.errors,
+          errors: error.errors
         });
       } else {
         console.error("Testimonial update error:", error);
         res.status(500).json({
           success: false,
-          message: "Failed to update testimonial",
+          message: "Failed to update testimonial"
         });
       }
     }
@@ -1249,18 +1202,18 @@ async function registerRoutes(app2) {
       if (!success) {
         return res.status(404).json({
           success: false,
-          message: "Testimonial not found",
+          message: "Testimonial not found"
         });
       }
       res.status(200).json({
         success: true,
-        message: "Testimonial deleted successfully",
+        message: "Testimonial deleted successfully"
       });
     } catch (error) {
       console.error("Testimonial deletion error:", error);
       res.status(500).json({
         success: false,
-        message: "Failed to delete testimonial",
+        message: "Failed to delete testimonial"
       });
     }
   });
@@ -1272,7 +1225,7 @@ async function registerRoutes(app2) {
       console.error("FAQs fetch error:", error);
       res.status(500).json({
         success: false,
-        message: "Failed to fetch FAQs",
+        message: "Failed to fetch FAQs"
       });
     }
   });
@@ -1283,7 +1236,7 @@ async function registerRoutes(app2) {
       if (!faq) {
         return res.status(404).json({
           success: false,
-          message: "FAQ not found",
+          message: "FAQ not found"
         });
       }
       res.status(200).json(faq);
@@ -1291,7 +1244,7 @@ async function registerRoutes(app2) {
       console.error("FAQ fetch error:", error);
       res.status(500).json({
         success: false,
-        message: "Failed to fetch FAQ",
+        message: "Failed to fetch FAQ"
       });
     }
   });
@@ -1302,20 +1255,20 @@ async function registerRoutes(app2) {
       res.status(201).json({
         success: true,
         message: "FAQ added successfully",
-        faq: newFaq,
+        faq: newFaq
       });
     } catch (error) {
       if (error instanceof z2.ZodError) {
         res.status(400).json({
           success: false,
           message: "Invalid FAQ data",
-          errors: error.errors,
+          errors: error.errors
         });
       } else {
         console.error("FAQ creation error:", error);
         res.status(500).json({
           success: false,
-          message: "Failed to add FAQ",
+          message: "Failed to add FAQ"
         });
       }
     }
@@ -1328,26 +1281,26 @@ async function registerRoutes(app2) {
       if (!updatedFaq) {
         return res.status(404).json({
           success: false,
-          message: "FAQ not found",
+          message: "FAQ not found"
         });
       }
       res.status(200).json({
         success: true,
         message: "FAQ updated successfully",
-        faq: updatedFaq,
+        faq: updatedFaq
       });
     } catch (error) {
       if (error instanceof z2.ZodError) {
         res.status(400).json({
           success: false,
           message: "Invalid FAQ data",
-          errors: error.errors,
+          errors: error.errors
         });
       } else {
         console.error("FAQ update error:", error);
         res.status(500).json({
           success: false,
-          message: "Failed to update FAQ",
+          message: "Failed to update FAQ"
         });
       }
     }
@@ -1359,18 +1312,18 @@ async function registerRoutes(app2) {
       if (!success) {
         return res.status(404).json({
           success: false,
-          message: "FAQ not found",
+          message: "FAQ not found"
         });
       }
       res.status(200).json({
         success: true,
-        message: "FAQ deleted successfully",
+        message: "FAQ deleted successfully"
       });
     } catch (error) {
       console.error("FAQ deletion error:", error);
       res.status(500).json({
         success: false,
-        message: "Failed to delete FAQ",
+        message: "Failed to delete FAQ"
       });
     }
   });
@@ -1381,7 +1334,7 @@ async function registerRoutes(app2) {
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: "Failed to fetch intent form submissions",
+        message: "Failed to fetch intent form submissions"
       });
     }
   });
@@ -1393,26 +1346,26 @@ async function registerRoutes(app2) {
         phone: parsedData.phone,
         service: parsedData.service || "Urgent Consultation",
         message: parsedData.message || "Building repair inquiry",
-        consent: parsedData.consent,
+        consent: parsedData.consent
       };
       const newIntent = await storage.createIntent(intentData);
       res.status(200).json({
         success: true,
         message: "Intent form submitted successfully",
-        intent: newIntent,
+        intent: newIntent
       });
     } catch (error) {
       if (error instanceof z2.ZodError) {
         res.status(400).json({
           success: false,
           message: "Invalid form data",
-          errors: error.errors,
+          errors: error.errors
         });
       } else {
         console.error("Intent form creation error:", error);
         res.status(500).json({
           success: false,
-          message: "Failed to process intent form",
+          message: "Failed to process intent form"
         });
       }
     }
@@ -1424,18 +1377,18 @@ async function registerRoutes(app2) {
       if (!success) {
         return res.status(404).json({
           success: false,
-          message: "Intent form submission not found",
+          message: "Intent form submission not found"
         });
       }
       res.status(200).json({
         success: true,
-        message: "Intent form submission deleted successfully",
+        message: "Intent form submission deleted successfully"
       });
     } catch (error) {
       console.error("Intent deletion error:", error);
       res.status(500).json({
         success: false,
-        message: "Failed to delete intent form submission",
+        message: "Failed to delete intent form submission"
       });
     }
   });
@@ -1460,37 +1413,35 @@ var vite_config_default = defineConfig({
     react(),
     runtimeErrorOverlay(),
     themePlugin(),
-    ...(process.env.NODE_ENV !== "production" && process.env.REPL_ID !== void 0
-      ? [
-          await import("@replit/vite-plugin-cartographer").then((m) =>
-            m.cartographer()
-          ),
-        ]
-      : []),
+    ...process.env.NODE_ENV !== "production" && process.env.REPL_ID !== void 0 ? [
+      await import("@replit/vite-plugin-cartographer").then(
+        (m) => m.cartographer()
+      )
+    ] : []
   ],
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "client", "src"),
       "@shared": path.resolve(import.meta.dirname, "shared"),
-      "@assets": path.resolve(import.meta.dirname, "attached_assets"),
-    },
+      "@assets": path.resolve(import.meta.dirname, "attached_assets")
+    }
   },
   root: path.resolve(import.meta.dirname, "client"),
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
-    emptyOutDir: true,
-  },
+    emptyOutDir: true
+  }
 });
 
 // server/vite.ts
 import { nanoid } from "nanoid";
 var viteLogger = createLogger();
 function log(message, source = "express") {
-  const formattedTime = /* @__PURE__ */ new Date().toLocaleTimeString("en-US", {
+  const formattedTime = (/* @__PURE__ */ new Date()).toLocaleTimeString("en-US", {
     hour: "numeric",
     minute: "2-digit",
     second: "2-digit",
-    hour12: true,
+    hour12: true
   });
   console.log(`${formattedTime} [${source}] ${message}`);
 }
@@ -1498,7 +1449,7 @@ async function setupVite(app2, server) {
   const serverOptions = {
     middlewareMode: true,
     hmr: { server },
-    allowedHosts: true,
+    allowedHosts: true
   };
   const vite = await createViteServer({
     ...vite_config_default,
@@ -1508,10 +1459,10 @@ async function setupVite(app2, server) {
       error: (msg, options) => {
         viteLogger.error(msg, options);
         process.exit(1);
-      },
+      }
     },
     server: serverOptions,
-    appType: "custom",
+    appType: "custom"
   });
   app2.use(vite.middlewares);
   app2.use("*", async (req, res, next) => {
@@ -1558,7 +1509,7 @@ app.use((req, res, next) => {
   const path3 = req.path;
   let capturedJsonResponse = void 0;
   const originalResJson = res.json;
-  res.json = function (bodyJson, ...args) {
+  res.json = function(bodyJson, ...args) {
     capturedJsonResponse = bodyJson;
     return originalResJson.apply(res, [bodyJson, ...args]);
   };
@@ -1591,14 +1542,11 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
   const port = 5e3;
-  server.listen(
-    {
-      port,
-      host: "0.0.0.0",
-      reusePort: true,
-    },
-    () => {
-      log(`serving on port ${port}`);
-    }
-  );
+  server.listen({
+    port,
+    host: "0.0.0.0",
+    reusePort: true
+  }, () => {
+    log(`serving on port ${port}`);
+  });
 })();
