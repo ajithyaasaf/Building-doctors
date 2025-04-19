@@ -1,5 +1,59 @@
-node_modules
+# Dependency directories
+node_modules/
+
+# Build outputs
+dist/
+server/public/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE/editor specific files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# macOS files
 .DS_Store
-server/public
+
+# Windows files
+Thumbs.db
+
+# Backup files
+*.bak
+*.tmp
+*.swp
+*.log
+
+# TypeScript/JavaScript build artifacts
+*.js.map
+*.ts.map
+*.d.ts
+
+# Vite configuration backups
 vite.config.ts.*
+
+# Archives
+*.zip
 *.tar.gz
+
+# Logs and debugging files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Test coverage reports
+coverage/
+
+# Local development files
+/.cache/
+/.parcel-cache/
+/.vite/
+
+# Ignore lock files if using Yarn or PNPM
+# Uncomment the lines below if you want to ignore these files
+# yarn.lock
+# pnpm-lock.yaml
